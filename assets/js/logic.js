@@ -63,12 +63,13 @@ $(document).ready(function () {
     }
 
     $('#add-barcode').on('keyup', function (event) {
+        event.preventDefault();
         if (event.which === 13) {
-            addInventory($(this).val());
             $(this).val('');
-            $('#add-modal').modal();
-            $(this).focus();
+            addInventory($(this).val());
+            $('#add-modal').openModal();
         }
     });
+
 
 })
