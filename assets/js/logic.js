@@ -50,8 +50,12 @@ $(document).ready(function () {
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref(id + '/' + color + '/' + id + '/').set({dateCreated: dateCreated, status: 'In Stock' });
-        setTimeout(() => db.ref(id + '/' + color + '/' + id + '/').once(snap => console.log(snap.val())), 500);
+        db.ref(id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'In Stock' });
+        setTimeout(() => db.ref(id + '/' + color + '/' + barcode + '/').once('value', snap => {
+            $('#added-barcode').text(barcode);
+            $('#added-date').text(snap.val().dateCreated);
+            $('#added-status').text(snap.val().status);
+        }), 200);
     }
 
     function verifyAddInventory(barcode){
