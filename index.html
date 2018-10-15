@@ -13,7 +13,6 @@
         <div class="nav-wrappber">
             <a href="#" class="brand-logo">Inventory Managment</a>
             <ul class="right hide-on-med-and-down">
-                <li><a href="#">View</a></li>
                 <li><a href="#add-modal" class="waves-effect waves-light modal-trigger">Add</a></li>
                 <li><a href="#ship-modal" class="waves-effect waves-light modal-trigger">Ship</a></li>
             </ul>
@@ -41,7 +40,15 @@
     <div id='add-modal' class="modal">
         <div class="modal-content">
             <h4>Add Inventory</h4>
-            <p>FORM DATA</p>
+            <div class="row">
+                <form class="col s-12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input placeholder="Barcode" id='add-barcode' type="text" class="validate">
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -51,6 +58,7 @@
             <p>FORM DATA</p>
         </div>
     </div>
+
 
 
 
