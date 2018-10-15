@@ -51,6 +51,11 @@ $(document).ready(function () {
         let dateCreated = parseDateCreated(barcode);
 
         db.ref(id + '/' + color + '/' + id + '/').set({dateCreated: dateCreated, status: 'In Stock' });
+        setTimeout(() => db.ref(id + '/' + color + '/' + id + '/').once(snap => console.log(snap.val())), 500);
+    }
+
+    function verifyAddInventory(barcode){
+
     }
 
     $('#add-barcode').on('keyup', function (event) {
