@@ -50,7 +50,7 @@ $(document).ready(function () {
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref(id + '/' + color + '/').set({ id: barcode, dateCreated: dateCreated, status: 'In Stock' });
+        db.ref(id + '/' + color + '/' + id + '/').set({dateCreated: dateCreated, status: 'In Stock' });
     }
 
     $('#add-barcode').on('keyup', function (event) {
