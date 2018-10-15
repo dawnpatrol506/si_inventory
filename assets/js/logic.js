@@ -50,11 +50,14 @@ $(document).ready(function () {
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref(id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'In Stock' });
+        db.ref(id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'active' });
+        $('#last-add').attr('class', 'white');
+
         setTimeout(() => db.ref(id + '/' + color + '/' + barcode + '/').once('value', snap => {
-            $('#added-barcode').text(barcode);
-            $('#added-date').text(snap.val().dateCreated);
-            $('#added-status').text(snap.val().status);
+            $('#added-barcode').text('Barcode: ' + barcode);
+            $('#added-date').text('Date Created: ' + snap.val().dateCreated);
+            $('#added-status').text('Status: ' + snap.val().status);
+            $('#last-add').attr('class', 'teal lighten-2')
         }), 200);
     }
 
@@ -62,7 +65,7 @@ $(document).ready(function () {
 
     }
 
-    $('#add-barcode').on('keyup', function (event) {
+    $('#add-barcode').on('keypress', function (event) {
         event.preventDefault();
         if (event.which === 13) {
             addInventory($(this).val());
