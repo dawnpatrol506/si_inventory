@@ -62,6 +62,24 @@ $(document).ready(function () {
         }), 200);
     }
 
+    function shipInventory(barcode, tracking){
+        let id = parseId(barcode);
+        let color = parseColor(id, barcode);
+        let dateShipped = new Date();
+        tracking = tracking.substring(tracking.length - 13, tracking.length - 1);
+
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE'});
+        $('#last-ship').attr('class', 'white');
+
+        setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
+            addNameLookup(id, $('#shipped-name'), color);
+            $('#shipped-barcode').text('Barcode: ' + barcode);
+            $('#shipped-date').text('Date Created: ' + snap.val().dateCreated);
+            $('#shipped-status').text('Status: ' + snap.val().status);
+            $('#last-ship').attr('class', 'green accent-3');
+        }), 200);
+    }
+
     function addNameLookup(id, elem, color){
         db.ref('part_lookup/' + id).once('value', snap => {
             elem.text(snap.val() + ' ' + color.toUpperCase());
@@ -112,7 +130,6 @@ $(document).ready(function () {
 
     db.ref('/inventory').on('value', snap => {
         let color = $('#color-selector').val();
-        console.log(color);
         snap = snap.val();
         countActiveParts(snap, color);
     })
@@ -124,6 +141,21 @@ $(document).ready(function () {
         addInventory(barcode);
         $('#add-barcode').val('');
         $('#add-barcode').focus();
+    })
+
+    $('#ship-sbmt').on('click', function(e){
+        e.preventDefault();
+        if($('#ship-tracking').val() === ''){
+            $('#ship-tracking').focus();
+        }
+        else{
+            const barcode = $('#ship-barcode').val();
+            const tracking = $('#ship-tracking').val();
+            shipInventory(barcode, tracking);
+            $('#ship-barcode').val('');
+            $('#ship-tracking').val('');
+            $('#ship-tracking').focus();
+        }
     })
 
 })

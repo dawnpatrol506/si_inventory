@@ -73,7 +73,21 @@
     <div id='ship-modal' class="modal">
         <div class="modal-content">
             <h4>Ship Inventory</h4>
-            <p>FORM DATA</p>
+            <div class="row">
+                <form class="col s-12">
+                    <input placeholder="Barcode" id="ship-barcode" type="text" autofocus>
+                    <input placeholder="Tracking#" id='ship-tracking' type="text">
+                    <button style="display:none" id="ship-sbmt" class="btn waves-effect waves-ligth" type="submit" method="post">Submit</button>
+                </form>
+            </div>
+            <div class="row">
+                <div id='last-ship' class="green accent-3">
+                    <h3 id='shipped-name'></h3>
+                    <p id="shipped-barcode"></p>
+                    <p id='shipped-date'></p>
+                    <p id="shipped-status"></p>
+                </div>
+            </div>
         </div>
     </div>
 
