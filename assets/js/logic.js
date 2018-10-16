@@ -50,7 +50,7 @@ $(document).ready(function () {
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'active' });
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').set({ dateCreated: dateCreated, status: 'active' });
         $('#last-add').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
@@ -62,13 +62,13 @@ $(document).ready(function () {
         }), 200);
     }
 
-    function shipInventory(barcode, tracking){
+    function shipInventory(barcode, tracking) {
         let id = parseId(barcode);
         let color = parseColor(id, barcode);
         let dateShipped = new Date();
         tracking = tracking.substring(tracking.length - 13, tracking.length - 1);
 
-        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE'});
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({ dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE' });
         $('#last-ship').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
@@ -80,7 +80,7 @@ $(document).ready(function () {
         }), 200);
     }
 
-    function addNameLookup(id, elem, color){
+    function addNameLookup(id, elem, color) {
         db.ref('part_lookup/' + id).once('value', snap => {
             elem.text(snap.val() + ' ' + color.toUpperCase());
         })
@@ -88,13 +88,13 @@ $(document).ready(function () {
 
     // function verifyAddInventory(barcode){}
 
-    function countActiveParts(snap, color){
+    function countActiveParts(snap, color) {
         $.each(snap, (key, value) => {
             let count = 0;
-            $.each(value, (key, value) =>{
-                if(key.toUpperCase() === color.toString().toUpperCase()){
+            $.each(value, (key, value) => {
+                if (key.toUpperCase() === color.toString().toUpperCase()) {
                     $.each(value, (key, value) => {
-                        if(value.status.toUpperCase() === 'ACTIVE'){
+                        if (value.status.toUpperCase() === 'ACTIVE') {
                             count++;
                         }
                     })
@@ -120,7 +120,7 @@ $(document).ready(function () {
         // });
     })
 
-    $('select').on('change', function(e){
+    $('select').on('change', function (e) {
         let color = $(this).val();
         db.ref('/inventory').once('value', snap => {
             snap = snap.val();
@@ -133,9 +133,9 @@ $(document).ready(function () {
         snap = snap.val();
         countActiveParts(snap, color);
     })
-    
 
-    $('#add-sbmt').on('click', function(e){
+
+    $('#add-sbmt').on('click', function (e) {
         e.preventDefault();
         const barcode = $('#add-barcode').val();
         addInventory(barcode);
@@ -143,12 +143,12 @@ $(document).ready(function () {
         $('#add-barcode').focus();
     })
 
-    $('#ship-sbmt').on('click', function(e){
+    $('#ship-sbmt').on('click', function (e) {
         e.preventDefault();
-        if($('#ship-tracking').val() === ''){
+        if ($('#ship-tracking').val() === '') {
             $('#ship-tracking').focus();
         }
-        else{
+        else {
             const barcode = $('#ship-barcode').val();
             const tracking = $('#ship-tracking').val();
             shipInventory(barcode, tracking);
@@ -157,5 +157,41 @@ $(document).ready(function () {
             $('#ship-tracking').focus();
         }
     })
+
+    var isRunning = false;
+
+    $('#bscanner').on('click', function(e){
+        if(isRunning){
+            Quagga.stop();
+            $('#scan-window').empty();
+            isRunning = false;
+        }
+        else{
+            initScanner();
+            isRunning = true;
+        }
+    })
+
+    function initScanner() {
+        Quagga.init({
+            inputStream: {
+                name: 'Live',
+                type: 'LiveStream',
+                target: document.querySelector('#scan-window')
+            },
+            decoder: {
+                readers: ['code_128_reader']
+            }
+        }, function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            console.log('Initialization complete!');
+        });
+    }
+
+
 
 })

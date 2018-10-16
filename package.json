@@ -1,0 +1,22 @@
+{
+  "name": "si_inventory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dawnpatrol506/si_inventory.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dawnpatrol506/si_inventory/issues"
+  },
+  "homepage": "https://github.com/dawnpatrol506/si_inventory#readme",
+  "dependencies": {
+    "quagga": "^0.12.1"
+  }
+}
