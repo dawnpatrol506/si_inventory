@@ -43,16 +43,13 @@
             <h4>Add Inventory</h4>
             <div class="row">
                 <form class="col s-12">
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input placeholder="Barcode" id='add-barcode' type="text" class="validate" autofocus>
-                        </div>
-                    </div>
+                    <input placeholder="Barcode" id='add-barcode' type="text" autofocus>
+                    <button style="display:none" id='add-sbmt' class="btn waves-effect waves-light" type="submit" method="post">Submit</button>
                 </form>
             </div>
             <div class="row">
-                <div id='last-add' class="teal lighten-2">
-                    <h4 class="center">Last Added</h4>
+                <div id='last-add' class="green accent-3">
+                    <h3 id='added-name'></h3>
                     <p id='added-barcode'></p>
                     <p id="added-date"></p>
                     <p id="added-status"></p>

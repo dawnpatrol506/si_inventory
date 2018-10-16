@@ -10,7 +10,7 @@ $(document).ready(function () {
         alpha.push(String.fromCharCode(i));
     }
     for (let i = 0; i < 10; i++) {
-        alpha.push(i);
+        alpha.push(i.toString());
     }
 
     let colors = ['BLACK', 'WHITE', 'BLUE', 'ORANGE', 'RED', 'LIME', 'GRAY', 'BLACK WRINKLE', 'BLACK TEXTURE'];
@@ -25,7 +25,7 @@ $(document).ready(function () {
         let colorCode = alpha.indexOf(barcode.substring(2, 3));
 
         if (id === 'bi') {
-            return drba[colorCode];
+            return drpa[colorCode];
         }
         else if (id === 'aj' || id === 'ak') {
             return ws[colorCode];
@@ -45,34 +45,38 @@ $(document).ready(function () {
     }
 
     function addInventory(barcode) {
-
         let id = parseId(barcode);
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref(id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'active' });
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').set({dateCreated: dateCreated, status: 'active' });
         $('#last-add').attr('class', 'white');
 
-        setTimeout(() => db.ref(id + '/' + color + '/' + barcode + '/').once('value', snap => {
+        setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
+            partLookup(id, $('#added-name'), color);
             $('#added-barcode').text('Barcode: ' + barcode);
             $('#added-date').text('Date Created: ' + snap.val().dateCreated);
             $('#added-status').text('Status: ' + snap.val().status);
-            $('#last-add').attr('class', 'teal lighten-2')
+            $('#last-add').attr('class', 'green accent-3')
         }), 200);
     }
 
-    function verifyAddInventory(barcode){
-
+    function partLookup(id, elem, color){
+        db.ref('part_lookup/' + id).once('value', snap => {
+            elem.text(snap.val() + ' ' + color.toUpperCase());
+        })
     }
 
-    $('#add-barcode').on('keypress', function (event) {
-        event.preventDefault();
-        if (event.which === 13) {
-            addInventory($(this).val());
-            $(this).val('');
-            $('#add-modal').openModal();
-        }
-    });
+    // function verifyAddInventory(barcode){
+    //     // if(barcode.lenght < )
+    // }
 
+    $('#add-sbmt').on('click', function(e){
+        e.preventDefault();
+        const barcode = $('#add-barcode').val();
+        addInventory(barcode);
+        $('#add-barcode').val('');
+        $('#add-barcode').focus();
+    })
 
 })
