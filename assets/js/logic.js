@@ -1,5 +1,6 @@
 $(document).ready(function () {
     $('.modal').modal();
+    $('select').formSelect();
 
 
     let db = firebase.database();
@@ -53,7 +54,7 @@ $(document).ready(function () {
         $('#last-add').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
-            partLookup(id, $('#added-name'), color);
+            addNameLookup(id, $('#added-name'), color);
             $('#added-barcode').text('Barcode: ' + barcode);
             $('#added-date').text('Date Created: ' + snap.val().dateCreated);
             $('#added-status').text('Status: ' + snap.val().status);
@@ -61,15 +62,60 @@ $(document).ready(function () {
         }), 200);
     }
 
-    function partLookup(id, elem, color){
+    function addNameLookup(id, elem, color){
         db.ref('part_lookup/' + id).once('value', snap => {
             elem.text(snap.val() + ' ' + color.toUpperCase());
         })
     }
 
-    // function verifyAddInventory(barcode){
-    //     // if(barcode.lenght < )
-    // }
+    // function verifyAddInventory(barcode){}
+
+    function countActiveParts(snap, color){
+        $.each(snap, (key, value) => {
+            let count = 0;
+            $.each(value, (key, value) =>{
+                if(key.toUpperCase() === color.toString().toUpperCase()){
+                    $.each(value, (key, value) => {
+                        if(value.status.toUpperCase() === 'ACTIVE'){
+                            count++;
+                        }
+                    })
+                }
+            })
+
+            $('#' + key).text(count);
+        })
+    }
+
+    db.ref('/part_lookup').once('value', snap => {
+        let color = $('#color-selector').formSelect('getSelectedValues')[0];
+
+        snap = snap.val();
+        $.each(snap, (key, value) => {
+            let newTableRow = $('<tr><td>' + value + '</td><td id="' + key + '">0</td></tr>');
+            $('#table').append(newTableRow);
+        })
+
+        db.ref('/inventory').once('value', snap => {
+            snap = snap.val();
+            countActiveParts(snap, color);                       
+        });
+    })
+
+    $('select').on('change', function(e){
+        let color = $(this).val();
+        db.ref('/inventory').once('value', snap => {
+            snap = snap.val();
+            countActiveParts(snap, color);
+        })
+    })
+
+    db.ref('/inventory').on('value', snap => {
+        let color = $('#color-selector').val();
+        snap = snap.val;
+        countActiveParts(snap, color);
+    })
+    
 
     $('#add-sbmt').on('click', function(e){
         e.preventDefault();
