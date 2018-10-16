@@ -96,10 +96,10 @@ $(document).ready(function () {
             $('#table').append(newTableRow);
         })
 
-        db.ref('/inventory').once('value', snap => {
-            snap = snap.val();
-            countActiveParts(snap, color);                       
-        });
+        // db.ref('/inventory').once('value', snap => {
+        //     snap = snap.val();
+        //     countActiveParts(snap, color);                       
+        // });
     })
 
     $('select').on('change', function(e){
@@ -112,7 +112,8 @@ $(document).ready(function () {
 
     db.ref('/inventory').on('value', snap => {
         let color = $('#color-selector').val();
-        snap = snap.val;
+        console.log(color);
+        snap = snap.val();
         countActiveParts(snap, color);
     })
     
