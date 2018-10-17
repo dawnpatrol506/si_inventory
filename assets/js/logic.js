@@ -3,10 +3,9 @@ $(document).ready(function () {
     $('select').formSelect();
 
 
-    let db = firebase.database();
-    let storedb = firebase.firestore();
+    const db = firebase.database();
 
-    let alpha = [];
+    const alpha = [];
     for (var i = 97; i < (97 + 26); i++) {
         alpha.push(String.fromCharCode(i));
     }
@@ -158,67 +157,20 @@ $(document).ready(function () {
         }
     })
 
-    var isRunning = false;
-
-    $('#bscanner').on('click', function(e){
-        if(isRunning){
-            Quagga.stop();
-            $('#scan-window').empty();
-            isRunning = false;
-        }
-        else{
-            initScanner();
-            isRunning = true;
-        }
-    })
-
-    function initScanner() {
-        Quagga.init({
-            inputStream: {
-                name: 'Live',
-                type: 'LiveStream',
-                target: document.querySelector('#scan-window')
-            },
-            decoder: {
-                readers: ['code_128_reader']
-            }
-        }, function (err) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-
-            console.log('Initialization complete!');
-        });
+    function signIn(){
+        var provider = new firebase.auth.GoogleAuthProvider();
+       firebase.auth().signInWithPopup(provider).then(result => {
+            console.log(result);
+            $('#sign-in').attr('style', 'display:none');
+            $('#nav-area').attr('style', '');
+            $('#main-container').attr('style', '');
+        }).catch(err =>{
+            if(err) throw err;    
+        })
     }
 
-    Quagga.onProcessed(function(result){
-        var drawingCtx = Quagga.canvas.ctx.overlay;
-        var drawingCanvas = Quagga.canvas.dom.overlay;
-
-        if(result){
-            if(result.boxes){
-                drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute('width')), parseInt(drawingCanvas.getAttribute('height')));
-                result.boxes.filter(function(box){
-                    return box !== result.box;
-                }).forEach(function(box){
-                    Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, {color: "green", lineWidth: 2});
-                });
-            }
-
-            if(result.box){
-                Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: '#00F', lineWidth: 2});
-            }
-
-            if(result.codeResult && result.codeResult.code){
-                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
-            }
-        }
+    $('#sign-in-button').on('click', (e) =>{
+        console.log('click');
+        signIn();
     });
-
-    Quagga.onDetected(function(result){
-        console.log('Barcode detected and processed: ' + result.codeResult.code, result);
-    })
-
-
 })

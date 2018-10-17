@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <nav class="black">
+    <nav id='nav-area' class="black" style='display:none'>
         <div class="nav-wrapper">
             <a href="#" class="brand-logo hide-on-med-and-down">Inventory Managment</a>
             <a href="#" class="brand-logo hide-on-large">Inventory</a>
@@ -20,7 +20,7 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div id="main-container" class="container" style='display: none'>
         <div class="row">
             <h1>Current Inventory</h1>
         </div>
@@ -48,12 +48,6 @@
                 </thead>
             </table>
         </section>
-
-        <button id="bscanner" class="btn">Scan</button>
-        <div class="row">
-            <div class="col s-12 m6 l6" id='scan-window'>
-            </div>
-        </div>
     </div>
 
     <div id='add-modal' class="modal">
@@ -62,7 +56,8 @@
             <div class="row">
                 <form class="col s-12">
                     <input placeholder="Barcode" id='add-barcode' type="text" autofocus>
-                    <button style="display:none" id='add-sbmt' class="btn waves-effect waves-light" type="submit" method="post">Submit</button>
+                    <button style="display:none" id='add-sbmt' class="btn waves-effect waves-light" type="submit"
+                        method="post">Submit</button>
                 </form>
             </div>
             <div class="row">
@@ -83,7 +78,8 @@
                 <form class="col s-12">
                     <input placeholder="Barcode" id="ship-barcode" type="text" autofocus>
                     <input placeholder="Tracking#" id='ship-tracking' type="text">
-                    <button style="display:none" id="ship-sbmt" class="btn waves-effect waves-ligth" type="submit" method="post">Submit</button>
+                    <button style="display:none" id="ship-sbmt" class="btn waves-effect waves-ligth" type="submit"
+                        method="post">Submit</button>
                 </form>
             </div>
             <div class="row">
@@ -97,6 +93,11 @@
         </div>
     </div>
 
+    <div id='sign-in' class="container">
+        <div class="row center">
+            <button id='sign-in-button' class="btn" style="position:relative; top:25vh;">Sign in With Google</button>
+        </div>
+    </div>
 
 
     <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase.js"></script>
