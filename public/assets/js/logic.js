@@ -46,6 +46,14 @@ $(document).ready(function () {
     }
 
     function addInventory(barcode) {
+        if(!verifyBarcode(barcode)){
+            console.log('error');
+            $('#added-name').text('Error reading barcode');
+            $('#last-add').attr('class', 'red');
+            $('#add-barcode').focus();
+            return;
+        }
+
         let id = parseId(barcode);
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
@@ -63,12 +71,27 @@ $(document).ready(function () {
     }
 
     function shipInventory(barcode, tracking) {
+        if(!verifyBarcode(barcode)){
+            $('#shipped-name').text('Error reading barcode');
+            $('#last-ship').attr('class', 'red');
+            $('#ship-barcode').focus();
+            return;
+        }
+
+        if(!verifyTracking(tracking)){
+            $('#shipped-name').text('Error reading tracking #');
+            $('#last-ship').attr('class', 'red');
+            $('#ship-barcode').focus();
+            return;
+        }
+
         let id = parseId(barcode);
         let color = parseColor(id, barcode);
+        let dateCreated = parseDateCreated(barcode);
         let dateShipped = new Date();
-        tracking = tracking.substring(tracking.length - 13, tracking.length - 1);
+        tracking = tracking.substring(tracking.length - 12, tracking.length);
 
-        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({ dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE', lastUpdatedBy: user });
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({ dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE', lastUpdatedBy: user, dateCreated: dateCreated });
         $('#last-ship').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
@@ -78,6 +101,7 @@ $(document).ready(function () {
             $('#shipped-status').text('Status: ' + snap.val().status);
             $('#last-ship').attr('class', 'green accent-3');
         }), 200);
+        $('#ship-barcode').focus();
     }
 
     function addNameLookup(id, elem, color) {
@@ -86,7 +110,30 @@ $(document).ready(function () {
         })
     }
 
-    // function verifyAddInventory(barcode){}
+    function verifyBarcode(barcode){
+        let bool = true;
+
+        if(barcode.trim().length !== 18)
+            bool = false;
+        if(!isNaN(barcode.substring(0,1)))
+            bool = false;
+
+        return bool;
+    }
+
+    function verifyTracking(tracking){
+        let bool = true;
+
+        if(tracking.length < 12)
+            bool = false;
+
+        // for(let i = 0; i < tracking.length; i++){
+        //     if(!isNaN(tracking.charAt(i)))
+        //         bool = false;
+        // }
+
+        return bool;
+    }
 
     function countActiveParts(snap, color) {
         $.each(snap, (key, value) => {
