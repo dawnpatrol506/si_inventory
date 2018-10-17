@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 
     const db = firebase.database();
+    let user;
 
     const alpha = [];
     for (var i = 97; i < (97 + 26); i++) {
@@ -49,7 +50,7 @@ $(document).ready(function () {
         let color = parseColor(id, barcode);
         let dateCreated = parseDateCreated(barcode);
 
-        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').set({ dateCreated: dateCreated, status: 'active' });
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').set({ dateCreated: dateCreated, status: 'active', lastUpdatedBy: user });
         $('#last-add').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
@@ -67,7 +68,7 @@ $(document).ready(function () {
         let dateShipped = new Date();
         tracking = tracking.substring(tracking.length - 13, tracking.length - 1);
 
-        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({ dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE' });
+        db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').update({ dateShipped: dateShipped, tracking: tracking, status: 'INACTIVE', lastUpdatedBy: user });
         $('#last-ship').attr('class', 'white');
 
         setTimeout(() => db.ref('inventory/' + id + '/' + color + '/' + barcode + '/').once('value', snap => {
@@ -160,7 +161,7 @@ $(document).ready(function () {
     function signIn(){
         var provider = new firebase.auth.GoogleAuthProvider();
        firebase.auth().signInWithPopup(provider).then(result => {
-            console.log(result);
+            user = result.user.displayName;
             $('#sign-in').attr('style', 'display:none');
             $('#nav-area').attr('style', '');
             $('#main-container').attr('style', '');
@@ -170,7 +171,7 @@ $(document).ready(function () {
     }
 
     $('#sign-in-button').on('click', (e) =>{
-        console.log('click');
         signIn();
+        $('#sign-in-button').off('click');
     });
 })
