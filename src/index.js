@@ -34,7 +34,6 @@ $(document).ready(function () {
             ship.ship(barcode, tracking);
             $('#ship-barcode').val('');
             $('#ship-tracking').val('');
-            $('#ship-tracking').focus();
         }
     })
 

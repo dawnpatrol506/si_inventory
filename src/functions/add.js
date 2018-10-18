@@ -13,7 +13,7 @@ const add = {
 
         const addObject = {
             id: helper.parseId(barcode),
-            color: helper.parseColor(id, barcode),
+            color: helper.parseColor(helper.parseId(barcode), barcode),
             dateCreated: helper.parseDateCreated(barcode),
             barcode: barcode,
             user: user

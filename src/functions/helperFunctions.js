@@ -1,26 +1,28 @@
+const references = require('./referenceValues');
+
 const helper = {
     parseId: function(barcode){
         return barcode.substring(0, 2);
     },
 
     parseColor: function(id, barcode) {
-        let colorCode = alpha.indexOf(barcode.substring(2, 3));
+        let colorCode = references.alpha.indexOf(barcode.substring(2, 3));
         if (id === 'bi') {
-            return drpa[colorCode];
+            return references.drpa[colorCode];
         }
         else if (id === 'aj' || id === 'ak') {
-            return ws[colorCode];
+            return references.ws[colorCode];
         }
         else {
-            return colors[colorCode];
+            return references.colors[colorCode];
         }
     },
 
     parseDateCreated: function(barcode) {
-        let day = alpha.indexOf(barcode.substring(3, 4));
-        let month = alpha.indexOf(barcode.substring(4, 5));
-        let year = alpha.indexOf(barcode.substring(5, 6));
-        let hour = alpha.indexOf(barcode.substring(6, 7));
+        let day = references.alpha.indexOf(barcode.substring(3, 4));
+        let month = references.alpha.indexOf(barcode.substring(4, 5));
+        let year = references.alpha.indexOf(barcode.substring(5, 6));
+        let hour = references.alpha.indexOf(barcode.substring(6, 7));
 
         return month + '/' + day + '/20' + year + ' ' + hour + ':00';
     },
