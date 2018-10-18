@@ -43,7 +43,28 @@ const helper = {
                 bool = false;
         }
         return bool;
+    },
+
+    countActiveParts: function(snap, color) {
+        if(color === null)
+            return;
+
+        $.each(snap, (key, value) => {
+            let count = 0;
+            $.each(value, (key, value) => {
+                if (key.toUpperCase() === color.toString().toUpperCase()) {
+                    $.each(value, (key, value) => {
+                        if (value.status.toUpperCase() === 'ACTIVE') {
+                            count++;
+                        }
+                    })
+                }
+            })
+
+            $('#' + key).text(count);
+        })
     }
+
 }
 
 module.exports = helper;

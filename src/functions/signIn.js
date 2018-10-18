@@ -1,3 +1,4 @@
+const firebase = require('firebase');
 
 const signIn = {
     signIn: function () {
