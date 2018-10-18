@@ -2,8 +2,10 @@ $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
 
-
     const db = firebase.database();
+    const signIn = require('./functions/signIn');
+
+
     let user;
 
     const alpha = [];
@@ -111,26 +113,24 @@ $(document).ready(function () {
     }
 
     function verifyBarcode(barcode){
-        let bool = true;
-
         if(barcode.trim().length !== 18)
-            bool = false;
+            return false;
         if(!isNaN(barcode.substring(0,1)))
-            bool = false;
+            return false;
 
-        return bool;
+        return true;
     }
 
-    function verifyTracking(tracking){
+    function verifyTracking(trackingNumber){
         let bool = true;
 
-        if(tracking.length < 12)
-            bool = false;
+        if(trackingNumber.trim().length < 12)
+            return false;
 
-        // for(let i = 0; i < tracking.length; i++){
-        //     if(!isNaN(tracking.charAt(i)))
-        //         bool = false;
-        // }
+        for(let i = 0; i < trackingNumber.length; i++){
+            if(isNaN(trackingNumber.charAt(i)))
+                bool = false;
+        }
 
         return bool;
     }
@@ -160,11 +160,6 @@ $(document).ready(function () {
             let newTableRow = $('<tr><td>' + value + '</td><td id="' + key + '">0</td></tr>');
             $('#table').append(newTableRow);
         })
-
-        // db.ref('/inventory').once('value', snap => {
-        //     snap = snap.val();
-        //     countActiveParts(snap, color);                       
-        // });
     })
 
     $('select').on('change', function (e) {
@@ -205,20 +200,8 @@ $(document).ready(function () {
         }
     })
 
-    function signIn(){
-        var provider = new firebase.auth.GoogleAuthProvider();
-       firebase.auth().signInWithPopup(provider).then(result => {
-            user = result.user.displayName;
-            $('#sign-in').attr('style', 'display:none');
-            $('#nav-area').attr('style', '');
-            $('#main-container').attr('style', '');
-        }).catch(err =>{
-            if(err) throw err;    
-        })
-    }
-
     $('#sign-in-button').on('click', (e) =>{
-        signIn();
+        signIn.signIn();
         $('#sign-in-button').off('click');
     });
 })
