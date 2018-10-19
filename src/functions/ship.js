@@ -19,7 +19,7 @@ const ship = {
 
         let shipObject = {
             id: helper.parseId(barcode),
-            color: helper.parseColor(id, barcode),
+            color: helper.parseColor(helper.parseId(barcode), barcode),
             dateCreated: helper.parseDateCreated(barcode),
             dateShipped: new Date(),
             tracking: tracking.substring(tracking.length - 12, tracking.length),

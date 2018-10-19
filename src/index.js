@@ -2,11 +2,12 @@ $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
 
-    const signIn = require('./functions/signIn');
     const add = require('./functions/add');
     const ship = require('./functions/ship');
     const firebaseFunctions = require('./functions/firebaseFunctions');
     const helper = require('./functions/helperFunctions');
+    const firebase = require('firebase');
+    let user;
 
     //listeners
     firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
@@ -31,14 +32,23 @@ $(document).ready(function () {
         else {
             const barcode = $('#ship-barcode').val();
             const tracking = $('#ship-tracking').val();
-            ship.ship(barcode, tracking);
+            ship.ship(barcode, tracking, user);
             $('#ship-barcode').val('');
             $('#ship-tracking').val('');
         }
     })
 
     $('#sign-in-button').on('click', (e) => {
-        user = signIn.signIn();
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(result => {
+                
+                $('#sign-in').attr('style', 'display:none');
+                $('#nav-area').attr('style', '');
+                $('#main-container').attr('style', '');
+                user = (result.user.displayName);
+            }).catch(err => {
+                if (err) throw err;
+            })
         $('#sign-in-button').off('click');
     });
 

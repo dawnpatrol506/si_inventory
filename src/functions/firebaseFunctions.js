@@ -27,7 +27,7 @@ const firebaseFunctions = {
     },
 
     ship: function (shipObject) {
-        db.ref('inventory/' + shipObject.id + '/' + shipObject.color + '/' + shipObject.barcode + '/').update({ dateShipped: shipObject.dateShipped, tracking: shipObject.tracking, status: 'INACTIVE', lastUpdatedBy: shipObject.user, dateCreated: shipObject.dateCreated });
+        firebase.ref('inventory/' + shipObject.id + '/' + shipObject.color + '/' + shipObject.barcode + '/').update({ dateShipped: shipObject.dateShipped, tracking: shipObject.tracking, status: 'INACTIVE', lastUpdatedBy: shipObject.user, dateCreated: shipObject.dateCreated });
     },
 
     lastChanged: function (obj, elementPrefix) {
@@ -45,7 +45,7 @@ const firebaseFunctions = {
 
             snap = snap.val();
             $.each(snap, (key, value) => {
-                let newTableRow = $('<tr><td>' + value + '</td><td id="' + key + '">0</td></tr>');
+                let newTableRow = $('<tr class="table-row"><td>' + value + '</td><td id="' + key + '">0</td></tr>');
                 $('#table').append(newTableRow);
             })
 
