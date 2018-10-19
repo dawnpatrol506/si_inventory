@@ -70,13 +70,14 @@ $(document).ready(function () {
             if($('tooltipped').length){
                 $('tooltipped').tooltip('destroy');
             }
-            $('.table-row').find('.temp-td').remove();
+            $('.temp-td').remove();
             $('.showing-buttons').removeClass('showing-buttons');
             let countBtn = $('<a class="btn-small waves-effect waves-light green tooltipped black-text" data-position="top" data-tooltip="Correct inventory count"><i class="material-icons">check_circle_outline</i></a>');
             let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">radio_button_unchecked</i></a>');
             let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">cancel</i></a>');
-            let row = $('<td class="temp-td">').append(countBtn, reviewBtn, closeBtn);
-            $(this).append(row);
+            let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
+            let row = $('<tr class="temp-td">').append(td);
+            $(this).after(row);
             $(this).addClass('showing-buttons');
             $('.tooltipped').tooltip();
         }
