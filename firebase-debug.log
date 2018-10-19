@@ -1,0 +1,19 @@
+[debug] [2018-10-19T15:59:49.428Z] ----------------------------------------------------------------------
+[debug] [2018-10-19T15:59:49.431Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\kevin\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase deploy
+[debug] [2018-10-19T15:59:49.431Z] CLI Version:   4.2.1
+[debug] [2018-10-19T15:59:49.431Z] Platform:      win32
+[debug] [2018-10-19T15:59:49.431Z] Node Version:  v8.12.0
+[debug] [2018-10-19T15:59:49.432Z] Time:          Fri Oct 19 2018 08:59:49 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-10-19T15:59:49.432Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-10-19T15:59:49.446Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-10-19T15:59:49.447Z] > authorizing via signed-in user
+[debug] [2018-10-19T15:59:49.448Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/strandindinventory  
+ 
+[debug] [2018-10-19T15:59:49.923Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'strandindinventory'...
+[info] 
+[info] i  deploying hosting
+[debug] [2018-10-19T15:59:49.935Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/strandindinventory/versions  
+

@@ -40,6 +40,45 @@ $(document).ready(function () {
         }
     })
 
+    $(document).on('click', '#check-sbmt', function(e){
+        e.preventDefault();
+        if(!helper.verifyBarcode($('#check-barcode').val())){
+            $('#check-barcode').val('');
+            $('#check-barcode').focus();
+            return;
+        }
+        let id = $('.showing-buttons').children().eq(1).attr('id');
+        let color = $('#color-selector').val().toUpperCase();
+        let barcode = $('#check-barcode').val();
+        let scanId = helper.parseId(barcode);
+        let scanColor = helper.parseColor(scanId, barcode).toUpperCase();
+
+        if(scanId !== id || scanColor !== color){
+            $('#check-barcode').val('');
+            $('#check-barcode').focus();
+            return;
+        }
+        $('#current-count').val('Current Items: ' + $('.showing-buttons').children().eq(1).val());
+        $('#new-count').val('Scanned Items: ' + ($('#new-count').val() + 1)); 
+
+        let newRow = $('<tr><td>' + $('#check-barcode').val() + '</td></tr>');
+        $('#existing-items-array').append(newRow);
+        $('#check-barcode').val('');
+        $('#check-barcode').focus();
+    })
+
+    $(document).on('click', '#submit-new-count', function(e){
+        e.preventDefault();
+
+        let existingItemsArray = [];
+        $('#existing-items-array').find('td').each((key, value) => existingItemsArray.push(value.textContent));
+
+        let sbmt = confirm('Are you sure you want to submit this list of barcodes? Empty lists will remove all items of this type from inventory');
+
+        if(sbmt)
+            firebaseFunctions.recountItem(existingItemsArray, user);
+    })
+
     $('#sign-in-button').on('click', (e) => {
         const provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().signInWithPopup(provider).then(result => {
@@ -55,6 +94,8 @@ $(document).ready(function () {
     });
 
     $('select').on('change', (e) => {
+        $('#existing-items-array').empty();
+
         firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
             let color = $('#color-selector').val();
             snap = snap.val();
@@ -63,6 +104,8 @@ $(document).ready(function () {
     })
 
     $(document).on('click', '.table-row', function () {
+        $('#existing-items-array').empty();
+        
         if ($(this).hasClass('showing-buttons') || $(this).hasClass('buttons-removed')) {
             $(this).removeClass('buttons-removed');
         }
@@ -72,11 +115,11 @@ $(document).ready(function () {
             }
             $('.temp-td').remove();
             $('.showing-buttons').removeClass('showing-buttons');
-            let countBtn = $('<a class="btn-small waves-effect waves-light green tooltipped black-text" data-position="top" data-tooltip="Correct inventory count"><i class="material-icons">check_circle_outline</i></a>');
+            let countBtn = $('<a href="#check-modal" class="btn-small waves-effect waves-light green tooltipped black-text modal-trigger" data-position="top" data-tooltip="Correct inventory count"><i class="material-icons">check_circle_outline</i></a>');
             let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">radio_button_unchecked</i></a>');
             let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">cancel</i></a>');
             let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
-            let row = $('<tr class="temp-td">').append(td);
+            let row = $('<tr class="temp-td">').append(td, $('<td>'));
             $(this).after(row);
             $(this).addClass('showing-buttons');
             $('.tooltipped').tooltip();

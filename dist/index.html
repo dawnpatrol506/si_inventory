@@ -56,7 +56,7 @@
         <div class="modal-content">
             <h4>Add Inventory</h4>
             <div class="row">
-                <form class="col s-12">
+                <form class="col s12">
                     <input placeholder="Barcode" id='add-barcode' type="text" autofocus>
                     <button style="display:none" id='add-sbmt' class="btn waves-effect waves-light" type="submit"
                         method="post">Submit</button>
@@ -77,10 +77,10 @@
         <div class="modal-content">
             <h4>Ship Inventory</h4>
             <div class="row">
-                <form class="col s-12">
+                <form class="col s12">
                     <input placeholder="Barcode" id="ship-barcode" type="text" autofocus>
                     <input placeholder="Tracking#" id='ship-tracking' type="text">
-                    <button style="display:none" id="ship-sbmt" class="btn waves-effect waves-ligth" type="submit"
+                    <button style="display:none" id="ship-sbmt" class="btn waves-effect waves-light" type="submit"
                         method="post">Submit</button>
                 </form>
             </div>
@@ -91,6 +91,22 @@
                     <p id='shipped-date'></p>
                     <p id="shipped-status"></p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='check-modal' class="modal">
+        <div class="modal-content">
+            <h4>Review/Revise Inventory</h4>
+            <div class="row">
+                <form class="col s12">
+                    <input placeholder="Barcode" id="check-barcode" type="text" autofocus>
+                    <button style="display:none" id="check-sbmt" class="btn waves-effect waves-light" type="submit" method="post">Submit</button>
+                    <div><span id="current-count"></span></div>
+                    <div><span id="new-count"></span></div>
+                    <table id="existing-items-array"></table>
+                    <button id='submit-new-count' class="btn waves-light waves-effect">Submit</button>
+                </form>
             </div>
         </div>
     </div>

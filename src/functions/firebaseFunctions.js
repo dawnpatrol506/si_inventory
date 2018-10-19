@@ -56,6 +56,40 @@ const firebaseFunctions = {
         })
     },
 
+    recountItem: function(existingItemsArray, user){
+        const id = helper.parseId(existingItemsArray[0]);
+        const color = helper.parseColor(id, existingItemsArray[0]);
+
+        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) =>{
+            
+            $.each(snap.val(), (key, value) =>{
+                let index = existingItemsArray.indexOf(key);
+                if(index < 0){
+                    firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + key + '/').update({status: 'Inactive', lastUpdatedBy: user, dateShipped: 'unknown'});
+                }
+                else{
+                    existingItemsArray = existingItemsArray.splice(index, 1);
+                    if(value.status !== 'active'){
+                        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + key + '/').update({status: 'Active', lastUpdatedBy: user, dateShipped: ''});
+                    }
+                }
+            })
+        })
+
+        if(existingItemsArray.length > 0){
+            existingItemsArray.forEach(barcode => {
+                const obj = {
+                    id: id,
+                    color: color,
+                    barcode: barcode,
+                    dateCreated: helper.parseDateCreated(barcode),
+                    user: user
+                }
+
+                this.add(obj);
+            })
+        }
+    },
 
 
     firebase: firebase
