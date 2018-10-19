@@ -40,7 +40,7 @@ const firebaseFunctions = {
         })
     },
 
-    populateTable: function(){
+    populateTable: function () {
         firebase.ref('/part_lookup').once('value', snap => {
 
             snap = snap.val();
@@ -49,35 +49,40 @@ const firebaseFunctions = {
                 $('#table').append(newTableRow);
             })
 
-            firebase.ref('/inventory').once('value', snap =>{
+            firebase.ref('/inventory').once('value', snap => {
                 helper.countActiveParts(snap.val(), 'black');
             })
 
         })
     },
 
-    recountItem: function(existingItemsArray, user){
+    recountItem: function (existingItemsArray, user) {
         const id = helper.parseId(existingItemsArray[0]);
         const color = helper.parseColor(id, existingItemsArray[0]);
+        console.log('scanned in: ', existingItemsArray);
 
-        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) =>{
-            
-            $.each(snap.val(), (key, value) =>{
-                let index = existingItemsArray.indexOf(key);
-                if(index < 0){
-                    firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + key + '/').update({status: 'Inactive', lastUpdatedBy: user, dateShipped: 'unknown'});
+        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) => {
+            let dbBarcodes = [];
+            $.each(snap.val(), (key, value) => dbBarcodes.push(key));
+
+            dbBarcodes.forEach(code => {
+                let index = existingItemsArray.indexOf(code);
+                if (index < 0) {
+                    firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Inactive', lastUpdatedBy: user, dateShipped: 'unknown' });
                 }
-                else{
-                    existingItemsArray = existingItemsArray.splice(index, 1);
-                    if(value.status !== 'active'){
-                        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + key + '/').update({status: 'Active', lastUpdatedBy: user, dateShipped: ''});
+                else {
+                    existingItemsArray.splice(index, 1);
+                    console.log('scanned in: ', existingItemsArray);
+                    if (snap.val()[code].status !== 'active') {
+                        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Active', lastUpdatedBy: user, dateShipped: '' });
                     }
                 }
             })
         })
 
-        if(existingItemsArray.length > 0){
+        if (existingItemsArray.length > 0) {
             existingItemsArray.forEach(barcode => {
+                console.log('this');
                 const obj = {
                     id: id,
                     color: color,

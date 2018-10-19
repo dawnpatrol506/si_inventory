@@ -2,7 +2,7 @@ $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
 
-    
+
 
     const add = require('./functions/add');
     const ship = require('./functions/ship');
@@ -40,26 +40,27 @@ $(document).ready(function () {
         }
     })
 
-    $(document).on('click', '#check-sbmt', function(e){
+    $(document).on('click', '#check-sbmt', function (e) {
         e.preventDefault();
-        if(!helper.verifyBarcode($('#check-barcode').val())){
+        if (!helper.verifyBarcode($('#check-barcode').val())) {
             $('#check-barcode').val('');
             $('#check-barcode').focus();
             return;
         }
         let id = $('.showing-buttons').children().eq(1).attr('id');
         let color = $('#color-selector').val().toUpperCase();
-        let barcode = $('#check-barcode').val();
+        let barcode = $('#check-barcode').val().trim();
         let scanId = helper.parseId(barcode);
-        let scanColor = helper.parseColor(scanId, barcode).toUpperCase();
+        let scanColor = helper.parseColor(scanId, barcode);
+        scanColor = scanColor.toUpperCase();
 
-        if(scanId !== id || scanColor !== color){
+        if (scanId !== id || scanColor !== color) {
             $('#check-barcode').val('');
             $('#check-barcode').focus();
             return;
         }
         $('#current-count').val('Current Items: ' + $('.showing-buttons').children().eq(1).val());
-        $('#new-count').val('Scanned Items: ' + ($('#new-count').val() + 1)); 
+        $('#new-count').val('Scanned Items: ' + ($('#new-count').val() + 1));
 
         let newRow = $('<tr><td>' + $('#check-barcode').val() + '</td></tr>');
         $('#existing-items-array').append(newRow);
@@ -67,16 +68,22 @@ $(document).ready(function () {
         $('#check-barcode').focus();
     })
 
-    $(document).on('click', '#submit-new-count', function(e){
+    $(document).on('click', '#submit-new-count', function (e) {
         e.preventDefault();
 
         let existingItemsArray = [];
-        $('#existing-items-array').find('td').each((key, value) => existingItemsArray.push(value.textContent));
+        $('#existing-items-array').find('td').each((key, value) => existingItemsArray.push(value.textContent.trim()));
 
         let sbmt = confirm('Are you sure you want to submit this list of barcodes? Empty lists will remove all items of this type from inventory');
 
-        if(sbmt)
-            firebaseFunctions.recountItem(existingItemsArray, user);
+        if (sbmt) {
+            if (existingItemsArray.length < 1)
+                console.log('Oh shit!');
+            else
+                firebaseFunctions.recountItem(existingItemsArray, user);
+        }
+
+        $('#existing-items-array').empty();
     })
 
     $('#sign-in-button').on('click', (e) => {
@@ -105,12 +112,12 @@ $(document).ready(function () {
 
     $(document).on('click', '.table-row', function () {
         $('#existing-items-array').empty();
-        
+
         if ($(this).hasClass('showing-buttons') || $(this).hasClass('buttons-removed')) {
             $(this).removeClass('buttons-removed');
         }
         else {
-            if($('tooltipped').length){
+            if ($('tooltipped').length) {
                 $('tooltipped').tooltip('destroy');
             }
             $('.temp-td').remove();
@@ -126,7 +133,7 @@ $(document).ready(function () {
         }
     })
 
-    $(document).on('click', '.td-closer', function(){
+    $(document).on('click', '.td-closer', function () {
         $('.tooltipped').tooltip('destroy');
         $('.temp-td').remove();
         $('.showing-buttons').addClass('buttons-removed');
