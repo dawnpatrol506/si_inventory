@@ -16,11 +16,15 @@
             <a href="#" class="brand-logo hide-on-med-and-down">Inventory Managment</a>
             <a href="#" class="brand-logo hide-on-large">Inventory</a>
             <ul class="right">
+                <li><a href="#" class="waves-effect waves-light dropdown-trigger" data-target="notification-dropdown"><span id="notification-badge" class="new badge red">0</span></a></li>
                 <li><a href="#add-modal" class="waves-effect waves-light modal-trigger">Add</a></li>
                 <li><a href="#ship-modal" class="waves-effect waves-light modal-trigger">Ship</a></li>
             </ul>
         </div>
     </nav>
+
+    <ul id='notification-dropdown' class="dropdown-content"></ul>
+
 
     <div id="main-container" class="container" style='display: none'>
         <div class="row">
@@ -101,7 +105,8 @@
             <div class="row">
                 <form class="col s12">
                     <input placeholder="Barcode" id="check-barcode" type="text" autofocus>
-                    <button style="display:none" id="check-sbmt" class="btn waves-effect waves-light" type="submit" method="post">Submit</button>
+                    <button style="display:none" id="check-sbmt" class="btn waves-effect waves-light" type="submit"
+                        method="post">Submit</button>
                     <div><span id="current-count"></span></div>
                     <div><span id="new-count"></span></div>
                     <table id="existing-items-array"></table>

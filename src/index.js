@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
+    $('.dropdown-trigger').dropdown({ constrainWidth: false, closeOnClick: false });
 
 
 
@@ -122,9 +123,9 @@ $(document).ready(function () {
             }
             $('.temp-td').remove();
             $('.showing-buttons').removeClass('showing-buttons');
-            let countBtn = $('<a href="#check-modal" class="btn-small waves-effect waves-light green tooltipped black-text modal-trigger" data-position="top" data-tooltip="Correct inventory count"><i class="material-icons">check_circle_outline</i></a>');
-            let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">radio_button_unchecked</i></a>');
-            let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">cancel</i></a>');
+            let countBtn = $('<a href="#check-modal" class="btn-small waves-effect waves-light green tooltipped black-text modal-trigger" data-position="top" data-tooltip="Correct inventory count"><i class="material-icons">check</i></a>');
+            let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text review-btn" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">priority_high</i></a>');
+            let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">close</i></a>');
             let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
             let row = $('<tr class="temp-td">').append(td, $('<td>'));
             $(this).after(row);
@@ -139,6 +140,42 @@ $(document).ready(function () {
         $('.showing-buttons').addClass('buttons-removed');
         $('.showing-buttons').removeClass('showing-buttons');
     });
+
+    $(document).on('click', '.review-btn', function () {
+        let id = $('.showing-buttons').children().eq(1).attr('id');
+        let color = $('#color-selector').val();
+        firebaseFunctions.firebase.ref('part_lookup/' + id).once('value', snap => {
+            firebaseFunctions.firebase.ref('review_requests/' + snap.val() + '/' + color + '/').set({ open: true });
+        });
+    });
+
+    firebaseFunctions.firebase.ref('review_requests/').on('value', snap => {
+        $('#notification-dropdown').empty();
+        let count = 0;
+        $.each(snap.val(), (key, value) => {
+            $.each(value, (nextKey, nextValue) => {
+                count++;
+                let newNotification = $('<li><a href="#" class="delete-notification">' + key.toUpperCase() + ': ' + nextKey.toUpperCase() + '     </a></li>');
+
+                $('#notification-dropdown').append(newNotification);
+            })
+        })
+        if (count === 0) {
+            $('#notification-badge').attr('class', 'badge');
+        }
+        else{
+            $('#notification-badge').attr('class', 'badge new red');
+        }
+
+        $('#notification-badge').text(count);
+    });
+
+    $(document).on('click', '.delete-notification', function () {
+        console.log($(this).text());
+        let splitArray = $(this).text().split(':');
+        console.log(splitArray);
+        firebaseFunctions.firebase.ref('review_requests/' + splitArray[0].trim() + '/' + splitArray[1].trim().toLowerCase()).remove()
+    })
 
     firebaseFunctions.populateTable();
 })

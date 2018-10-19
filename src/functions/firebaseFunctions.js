@@ -59,7 +59,6 @@ const firebaseFunctions = {
     recountItem: function (existingItemsArray, user) {
         const id = helper.parseId(existingItemsArray[0]);
         const color = helper.parseColor(id, existingItemsArray[0]);
-        console.log('scanned in: ', existingItemsArray);
 
         firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) => {
             let dbBarcodes = [];

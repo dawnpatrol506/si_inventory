@@ -5,3 +5,8 @@
 a{
     margin: 0px 3px;
 }
+
+.delete-notification:hover{
+    background-color: #f44336;
+    color: black;
+}
