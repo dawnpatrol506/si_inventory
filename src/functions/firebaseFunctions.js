@@ -81,7 +81,6 @@ const firebaseFunctions = {
 
         if (existingItemsArray.length > 0) {
             existingItemsArray.forEach(barcode => {
-                console.log('this');
                 const obj = {
                     id: id,
                     color: color,
@@ -95,6 +94,9 @@ const firebaseFunctions = {
         }
     },
 
+    inputSalesData: function(shipObject, DateObject){
+        firebase.ref(`/sales/${shipObject.id}/${shipObject.color.toUpperCase()}/${DateObject.year}/${DateObject.month}/${DateObject.week}/${DateObject.day}/`).set({barcode: shipObject.barcode});
+    },
 
     firebase: firebase
 }

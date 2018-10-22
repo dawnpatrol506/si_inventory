@@ -20,6 +20,7 @@
   "dependencies": {
     "firebase": "^5.5.4",
     "firebase-tools": "^5.1.1",
+    "moment": "^2.22.2",
     "quagga": "^0.12.1"
   },
   "devDependencies": {

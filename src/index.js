@@ -88,17 +88,23 @@ $(document).ready(function () {
     })
 
     $('#sign-in-button').on('click', (e) => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).then(result => {
+        //     const provider = new firebase.auth.GoogleAuthProvider();
+        //     firebase.auth().signInWithPopup(provider).then(result => {
 
-            $('#sign-in').attr('style', 'display:none');
-            $('#nav-area').attr('style', '');
-            $('#main-container').attr('style', '');
-            user = (result.user.displayName);
-        }).catch(err => {
-            if (err) throw err;
-        })
-        $('#sign-in-button').off('click');
+        //         $('#sign-in').attr('style', 'display:none');
+        //         $('#nav-area').attr('style', '');
+        //         $('#main-container').attr('style', '');
+        //         user = (result.user.displayName);
+        //     }).catch(err => {
+        //         if (err) throw err;
+        //     })
+        //     $('#sign-in-button').off('click');
+        // });
+
+        $('#sign-in').attr('style', 'display:none');
+        $('#nav-area').attr('style', '');
+        $('#main-container').attr('style', '');
+        user = "Kevin Davis";
     });
 
     $('select').on('change', (e) => {
@@ -127,7 +133,14 @@ $(document).ready(function () {
             let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text review-btn" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">priority_high</i></a>');
             let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">close</i></a>');
             let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
-            let row = $('<tr class="temp-td">').append(td, $('<td>'));
+
+            let thisWeek = $('<span class="red-text">10/</span>');
+            let lastWeek = $('<span class="blue-text">10/</span>');
+            let thisMonth = $('<span class="green-text">10/</span>');
+            let weeklyAvg = $('<span class="orange-text">10</span>');
+
+
+            let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
             $(this).after(row);
             $(this).addClass('showing-buttons');
             $('.tooltipped').tooltip();
@@ -163,7 +176,7 @@ $(document).ready(function () {
         if (count === 0) {
             $('#notification-badge').attr('class', 'badge');
         }
-        else{
+        else {
             $('#notification-badge').attr('class', 'badge new red');
         }
 
