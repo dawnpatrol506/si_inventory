@@ -95,7 +95,8 @@ const firebaseFunctions = {
     },
 
     inputSalesData: function(shipObject, DateObject){
-        firebase.ref(`/sales/${shipObject.id}/${shipObject.color.toUpperCase()}/${DateObject.year}/${DateObject.month}/${DateObject.week}/${DateObject.day}/`).set({barcode: shipObject.barcode});
+        const ref = firebase.ref(`/sales/${shipObject.id}/${shipObject.color.toUpperCase()}/${DateObject.year}/${DateObject.month}/${DateObject.week}/${DateObject.day}/`);
+        ref.child(shipObject.barcode).set('_');
     },
 
     firebase: firebase

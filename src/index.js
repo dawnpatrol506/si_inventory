@@ -88,23 +88,22 @@ $(document).ready(function () {
     })
 
     $('#sign-in-button').on('click', (e) => {
-        //     const provider = new firebase.auth.GoogleAuthProvider();
-        //     firebase.auth().signInWithPopup(provider).then(result => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(result => {
 
-        //         $('#sign-in').attr('style', 'display:none');
-        //         $('#nav-area').attr('style', '');
-        //         $('#main-container').attr('style', '');
-        //         user = (result.user.displayName);
-        //     }).catch(err => {
-        //         if (err) throw err;
-        //     })
-        //     $('#sign-in-button').off('click');
-        // });
+                $('#sign-in').attr('style', 'display:none');
+                $('#nav-area').attr('style', '');
+                $('#main-container').attr('style', '');
+                user = (result.user.displayName);
+            }).catch(err => {
+                if (err) throw err;
+            })
+            $('#sign-in-button').off('click');
 
-        $('#sign-in').attr('style', 'display:none');
-        $('#nav-area').attr('style', '');
-        $('#main-container').attr('style', '');
-        user = "Kevin Davis";
+        // $('#sign-in').attr('style', 'display:none');
+        // $('#nav-area').attr('style', '');
+        // $('#main-container').attr('style', '');
+        // user = "Kevin Davis";
     });
 
     $('select').on('change', (e) => {
