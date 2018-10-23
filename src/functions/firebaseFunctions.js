@@ -93,20 +93,66 @@ const firebaseFunctions = {
         }
     },
 
-    removeAll: function(id, color, user){
-        firebase.ref(`/inventory/${id}/${color.toUpperCase()}/`).once('value', snap =>{
-            $.each(snap.val(), (key, value) =>{
-                if(value.status.toUpperCase() === 'ACTIVE'){
+    removeAll: function (id, color, user) {
+        firebase.ref(`/inventory/${id}/${color.toUpperCase()}/`).once('value', snap => {
+            $.each(snap.val(), (key, value) => {
+                if (value.status.toUpperCase() === 'ACTIVE') {
                     let ref = `/inventory/${id}/${color}/${key}/`;
-                    firebase.ref(ref).update({status: 'Inactive', lastUpdatedBy: user, dateShipped: 'Unknown'});
+                    firebase.ref(ref).update({ status: 'Inactive', lastUpdatedBy: user, dateShipped: 'Unknown' });
                 }
             })
         })
     },
 
-    inputSalesData: function(shipObject, DateObject){
+    inputSalesData: function (shipObject, DateObject) {
         const ref = firebase.ref(`/sales/${shipObject.id}/${shipObject.color.toUpperCase()}/${DateObject.year}/${DateObject.month}/${DateObject.week}/${DateObject.day}/`);
         ref.child(shipObject.barcode).set('_');
+    },
+
+    getRecentSalesData: function (id, color, date, callback) {
+        const ref = firebase.ref(`sales/${id}/${color}/${date.year()}/${date.month() + 1}`);
+        ref.once('value', snap => {
+            snap = snap.val();
+
+            let yesterdayCount = 0;
+            let thisWeekCount = 0;
+            let lastWeekCount = 0;
+
+            if (snap === null) {
+                const data = {
+                    yesterdayCount,
+                    thisWeekCount,
+                    lastWeekCount,
+                }
+                callback(data);
+                return;
+            }
+
+            if (snap[date.week()][date.day() - 1] !== null) {
+                yesterdayCount = Object.keys(snap[date.week()][date.day() - 1]).length;
+            }
+
+            if (snap[date.week()] !== undefined) {
+                snap[date.week()].forEach(value => {
+                    thisWeekCount += Object.keys(value).length;
+                })
+            }
+
+
+            if (snap[date.week() - 1] !== undefined) {
+                snap[date.week() - 1].forEach(value => {
+                    lastWeekCount += Object.keys(value).length;
+                })
+            }
+
+            const data = {
+                yesterdayCount,
+                thisWeekCount,
+                lastWeekCount
+            };
+
+            callback(data);
+        });
     },
 
     firebase: firebase

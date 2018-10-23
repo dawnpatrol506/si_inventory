@@ -88,22 +88,22 @@ $(document).ready(function () {
     })
 
     $('#sign-in-button').on('click', (e) => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).then(result => {
+        // const provider = new firebase.auth.GoogleAuthProvider();
+        // firebase.auth().signInWithPopup(provider).then(result => {
 
-            $('#sign-in').attr('style', 'display:none');
-            $('#nav-area').attr('style', '');
-            $('#main-container').attr('style', '');
-            user = (result.user.displayName);
-        }).catch(err => {
-            if (err) throw err;
-        })
-        $('#sign-in-button').off('click');
+        //     $('#sign-in').attr('style', 'display:none');
+        //     $('#nav-area').attr('style', '');
+        //     $('#main-container').attr('style', '');
+        //     user = (result.user.displayName);
+        // }).catch(err => {
+        //     if (err) throw err;
+        // })
+        // $('#sign-in-button').off('click');
 
-        // $('#sign-in').attr('style', 'display:none');
-        // $('#nav-area').attr('style', '');
-        // $('#main-container').attr('style', '');
-        // user = "Kevin Davis";
+        $('#sign-in').attr('style', 'display:none');
+        $('#nav-area').attr('style', '');
+        $('#main-container').attr('style', '');
+        user = "Kevin Davis";
     });
 
     $('select').on('change', (e) => {
@@ -134,25 +134,18 @@ $(document).ready(function () {
             let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
             $(this).addClass('showing-buttons');
 
-            let date = moment();
-            let salesref = firebaseFunctions.firebase.ref(`/sales/${$('.showing-buttons').children().eq(1).attr('id')}/${$('#color-selector').val().toUpperCase()}/${date.year()}/${date.month() + 1}/${date.week()}/${date.day() - 1}/`);
 
-            salesref.once('value', snap => {
-                if (snap.val() !== null) {
-                    let thisWeek = $('<span class="sales-data red-text tooltipped" data-position="top" data-tooltip="yesterday">' + Object.keys(snap.val()).length + '</span>');
-                    let lastWeek = $('<span class="sales-data blue-text">?</span>');
-                    let thisMonth = $('<span class="sales-data green-text">?</span>');
-                    let weeklyAvg = $('<span class="sales-data orange-text">?</span>');
-                
-                    let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
-                    $(this).after(row);
-                    $('.tooltipped').tooltip();
-                }
-                else{
-                    let row = $('<tr class="temp-td">').append(td, $('<td>'));
-                    $(this).after(row);
-                    $('.tooltipped').tooltip();
-                }
+
+            firebaseFunctions.getRecentSalesData($('.showing-buttons').children().eq(1).attr('id'), $('#color-selector').val().toUpperCase(), moment(), function (data) {
+                let thisWeek = $('<span class="sales-data red-text tooltipped" data-position="top" data-tooltip="yesterday">' + data.yesterdayCount + '</span>');
+                let lastWeek = $('<span class="sales-data blue-text">' + data.thisWeekCount + '</span>');
+                let thisMonth = $('<span class="sales-data green-text">' + data.lastWeekCount + '</span>');
+                let weeklyAvg = $('<span class="sales-data orange-text">?</span>');
+
+                let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
+                $('.showing-buttons').after(row);
+                $('.tooltipped').tooltip();
+
             });
         }
     })
