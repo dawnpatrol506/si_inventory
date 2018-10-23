@@ -1,4 +1,5 @@
-const fb = require('firebase');
+const fb = require('firebase/app');
+require('firebase/database');
 const helper = require('./helperFunctions');
 
 var config = {
