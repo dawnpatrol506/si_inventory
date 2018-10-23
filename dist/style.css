@@ -10,3 +10,9 @@ a{
     background-color: #f44336;
     color: black;
 }
+
+.sales-data{
+    margin: 0px 8px;
+    font-weight: bolder;
+    font-size: 1.6em;
+}

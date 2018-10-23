@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
-    $('.dropdown-trigger').dropdown({ constrainWidth: false});
+    $('.dropdown-trigger').dropdown({ constrainWidth: false });
 
 
 
@@ -9,7 +9,6 @@ $(document).ready(function () {
     const ship = require('./functions/ship');
     const firebaseFunctions = require('./functions/firebaseFunctions');
     const helper = require('./functions/helperFunctions');
-    const firebase = require('firebase');
     let user;
 
     //listeners
@@ -79,7 +78,7 @@ $(document).ready(function () {
 
         if (sbmt) {
             if (existingItemsArray.length < 1)
-                firebaseFunctions.removeAll($('.showing-buttons').children().eq(1).attr('id'),$('#color-selector').val().toUpperCase(), user);
+                firebaseFunctions.removeAll($('.showing-buttons').children().eq(1).attr('id'), $('#color-selector').val().toUpperCase(), user);
             else
                 firebaseFunctions.recountItem(existingItemsArray, user);
         }
@@ -88,17 +87,17 @@ $(document).ready(function () {
     })
 
     $('#sign-in-button').on('click', (e) => {
-            // const provider = new firebase.auth.GoogleAuthProvider();
-            // firebase.auth().signInWithPopup(provider).then(result => {
+        // const provider = new firebase.auth.GoogleAuthProvider();
+        // firebase.auth().signInWithPopup(provider).then(result => {
 
-            //     $('#sign-in').attr('style', 'display:none');
-            //     $('#nav-area').attr('style', '');
-            //     $('#main-container').attr('style', '');
-            //     user = (result.user.displayName);
-            // }).catch(err => {
-            //     if (err) throw err;
-            // })
-            // $('#sign-in-button').off('click');
+        //     $('#sign-in').attr('style', 'display:none');
+        //     $('#nav-area').attr('style', '');
+        //     $('#main-container').attr('style', '');
+        //     user = (result.user.displayName);
+        // }).catch(err => {
+        //     if (err) throw err;
+        // })
+        // $('#sign-in-button').off('click');
 
         $('#sign-in').attr('style', 'display:none');
         $('#nav-area').attr('style', '');
@@ -132,17 +131,28 @@ $(document).ready(function () {
             let reviewBtn = $('<a class="btn-small waves-effect waves-light orange tooltipped black-text review-btn" data-position="top" data-tooltip="Request inventory count"><i class="material-icons">priority_high</i></a>');
             let closeBtn = $('<a class="btn-small waves-effect waves-light red td-closer tooltipped black-text" data-position="top" data-tooltip="Hide buttons"><i class="material-icons">close</i></a>');
             let td = $('<td>').append(countBtn, reviewBtn, closeBtn);
-
-            let thisWeek = $('<span class="red-text">10/</span>');
-            let lastWeek = $('<span class="blue-text">10/</span>');
-            let thisMonth = $('<span class="green-text">10/</span>');
-            let weeklyAvg = $('<span class="orange-text">10</span>');
-
-
-            let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
-            $(this).after(row);
             $(this).addClass('showing-buttons');
-            $('.tooltipped').tooltip();
+
+            let date = moment();
+            let salesref = firebaseFunctions.firebase.ref(`/sales/${$('.showing-buttons').children().eq(1).attr('id')}/${$('#color-selector').val().toUpperCase()}/${date.year()}/${date.month() + 1}/${date.week()}/${date.day() - 1}/`);
+
+            salesref.once('value', snap => {
+                if (snap.val() !== null) {
+                    let thisWeek = $('<span class="sales-data red-text tooltipped" data-position="top" data-tooltip="yesterday">' + Object.keys(snap.val()).length + '</span>');
+                    let lastWeek = $('<span class="sales-data blue-text">?</span>');
+                    let thisMonth = $('<span class="sales-data green-text">?</span>');
+                    let weeklyAvg = $('<span class="sales-data orange-text">?</span>');
+                
+                    let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
+                    $(this).after(row);
+                    $('.tooltipped').tooltip();
+                }
+                else{
+                    let row = $('<tr class="temp-td">').append(td, $('<td>'));
+                    $(this).after(row);
+                    $('.tooltipped').tooltip();
+                }
+            });
         }
     })
 
