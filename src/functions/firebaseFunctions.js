@@ -71,7 +71,6 @@ const firebaseFunctions = {
                 }
                 else {
                     existingItemsArray.splice(index, 1);
-                    console.log('scanned in: ', existingItemsArray);
                     if (snap.val()[code].status !== 'active') {
                         firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Active', lastUpdatedBy: user, dateShipped: '' });
                     }
@@ -92,6 +91,17 @@ const firebaseFunctions = {
                 this.add(obj);
             })
         }
+    },
+
+    removeAll: function(id, color, user){
+        firebase.ref(`/inventory/${id}/${color.toUpperCase()}/`).once('value', snap =>{
+            $.each(snap.val(), (key, value) =>{
+                if(value.status.toUpperCase() === 'ACTIVE'){
+                    let ref = `/inventory/${id}/${color}/${key}/`;
+                    firebase.ref(ref).update({status: 'Inactive', lastUpdatedBy: user, dateShipped: 'Unknown'});
+                }
+            })
+        })
     },
 
     inputSalesData: function(shipObject, DateObject){

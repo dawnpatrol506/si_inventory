@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
-    $('.dropdown-trigger').dropdown({ constrainWidth: false, closeOnClick: false });
+    $('.dropdown-trigger').dropdown({ constrainWidth: false});
 
 
 
@@ -79,7 +79,7 @@ $(document).ready(function () {
 
         if (sbmt) {
             if (existingItemsArray.length < 1)
-                console.log('Oh shit!');
+                firebaseFunctions.removeAll($('.showing-buttons').children().eq(1).attr('id'),$('#color-selector').val().toUpperCase(), user);
             else
                 firebaseFunctions.recountItem(existingItemsArray, user);
         }
@@ -88,22 +88,22 @@ $(document).ready(function () {
     })
 
     $('#sign-in-button').on('click', (e) => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider).then(result => {
+            // const provider = new firebase.auth.GoogleAuthProvider();
+            // firebase.auth().signInWithPopup(provider).then(result => {
 
-                $('#sign-in').attr('style', 'display:none');
-                $('#nav-area').attr('style', '');
-                $('#main-container').attr('style', '');
-                user = (result.user.displayName);
-            }).catch(err => {
-                if (err) throw err;
-            })
-            $('#sign-in-button').off('click');
+            //     $('#sign-in').attr('style', 'display:none');
+            //     $('#nav-area').attr('style', '');
+            //     $('#main-container').attr('style', '');
+            //     user = (result.user.displayName);
+            // }).catch(err => {
+            //     if (err) throw err;
+            // })
+            // $('#sign-in-button').off('click');
 
-        // $('#sign-in').attr('style', 'display:none');
-        // $('#nav-area').attr('style', '');
-        // $('#main-container').attr('style', '');
-        // user = "Kevin Davis";
+        $('#sign-in').attr('style', 'display:none');
+        $('#nav-area').attr('style', '');
+        $('#main-container').attr('style', '');
+        user = "Kevin Davis";
     });
 
     $('select').on('change', (e) => {
@@ -188,6 +188,7 @@ $(document).ready(function () {
         console.log(splitArray);
         firebaseFunctions.firebase.ref('review_requests/' + splitArray[0].trim() + '/' + splitArray[1].trim().toLowerCase()).remove()
     })
+
 
     firebaseFunctions.populateTable();
 })
