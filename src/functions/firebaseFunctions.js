@@ -129,21 +129,39 @@ const firebaseFunctions = {
                 return;
             }
 
-            if (snap[date.week()][date.day() - 1] !== null) {
-                yesterdayCount = Object.keys(snap[date.week()][date.day() - 1]).length;
+            if (snap[date.week()][date.day() - 1] !== null && snap[date.week()][date.day() - 1] !== undefined) {
+                if (typeof (snap[date.week()][date.day() - 1]) === 'object')
+                    yesterdayCount = Object.keys(snap[date.week()][date.day() - 1]).length;
+                else
+                    console.log('YESTERDAY: ', typeof (snap[date.week()][date.day() - 1]));
             }
 
-            if (snap[date.week()] !== undefined) {
-                snap[date.week()].forEach(value => {
-                    thisWeekCount += Object.keys(value).length;
-                })
+            if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
+                if (Array.isArray(snap[date.week()])) {
+                    snap[date.week()].forEach(value => {
+                        thisWeekCount += Object.keys(value).length;
+                    })
+                }
+                else{
+                    $.each(snap[date.week()], (key, value) =>{
+                        thisWeekCount += Object.keys(value).length;
+                    })
+                }
+
             }
 
+            if (snap[date.week() - 1] !== undefined && snap[date.week() - 1] !== null) {
+                if (Array.isArray(snap[date.week() - 1])) {
+                    snap[date.week()].forEach(value => {
+                        lastWeekCount += Object.keys(value).length;
+                    })
+                }
+                else{
+                    $.each(snap[date.week() - 1], (key, value) =>{
+                        lastWeekCount += Object.keys(value).length;
+                    })
+                }
 
-            if (snap[date.week() - 1] !== undefined) {
-                snap[date.week() - 1].forEach(value => {
-                    lastWeekCount += Object.keys(value).length;
-                })
             }
 
             const data = {
