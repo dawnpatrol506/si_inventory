@@ -13,6 +13,40 @@ $(document).ready(function () {
     require('firebase/auth');
     let user;
 
+
+    firebase.auth().onAuthStateChanged(userAuth => {
+        if (userAuth) {
+            $('#sign-in').attr('style', 'display:none');
+            $('#nav-area').attr('style', '');
+            $('#main-container').attr('style', '');
+            user = userAuth.displayName;
+        }
+        else {
+            $('#sign-in').attr('style', '');
+            $('#nav-area').attr('style', 'display:none');
+            $('#main-container').attr('style', 'display:none');
+            user = '';
+
+
+            $('#sign-in-button').on('click', (e) => {
+                firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+                    .then(() => {
+                        const provider = new firebase.auth.GoogleAuthProvider();
+                        return firebase.auth().signInWithPopup(provider).then(result => {
+
+                            $('#sign-in').attr('style', 'display:none');
+                            $('#nav-area').attr('style', '');
+                            $('#main-container').attr('style', '');
+                            user = (result.user.displayName);
+                        }).catch(err => {
+                            if (err) throw err;
+                        })
+                    });
+                $('#sign-in-button').off('click');
+            });
+        }
+    });
+
     //listeners
     firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
         let color = $('#color-selector').val();
@@ -87,25 +121,6 @@ $(document).ready(function () {
 
         $('#existing-items-array').empty();
     })
-
-    $('#sign-in-button').on('click', (e) => {
-        // const provider = new firebase.auth.GoogleAuthProvider();
-        // firebase.auth().signInWithPopup(provider).then(result => {
-
-        //     $('#sign-in').attr('style', 'display:none');
-        //     $('#nav-area').attr('style', '');
-        //     $('#main-container').attr('style', '');
-        //     user = (result.user.displayName);
-        // }).catch(err => {
-        //     if (err) throw err;
-        // })
-        // $('#sign-in-button').off('click');
-
-        $('#sign-in').attr('style', 'display:none');
-        $('#nav-area').attr('style', '');
-        $('#main-container').attr('style', '');
-        user = "Kevin Davis";
-    });
 
     $('select').on('change', (e) => {
         $('#existing-items-array').empty();
@@ -194,6 +209,9 @@ $(document).ready(function () {
         firebaseFunctions.firebase.ref('review_requests/' + splitArray[0].trim() + '/' + splitArray[1].trim().toLowerCase()).remove()
     })
 
+    $(document).on('click', '#log-out', () => {
+        firebase.auth().signOut().then(() => console.log(`Signed out: ${user}`), (err) => { if (err) console.log(err); });
+    })
 
     firebaseFunctions.populateTable();
 })
