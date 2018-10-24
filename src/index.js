@@ -2,6 +2,7 @@ $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
     $('.dropdown-trigger').dropdown({ constrainWidth: false });
+    $('.sidenav').sidenav({preventScrolling: false});
 
 
 
@@ -182,14 +183,16 @@ $(document).ready(function () {
     });
 
     firebaseFunctions.firebase.ref('review_requests/').on('value', snap => {
-        $('#notification-dropdown').empty();
+        $('#notification-dropdown-1').empty();
+        $('#notification-dropdown-2').empty();
         let count = 0;
         $.each(snap.val(), (key, value) => {
             $.each(value, (nextKey, nextValue) => {
                 count++;
                 let newNotification = $('<li><a href="#" class="delete-notification">' + key.toUpperCase() + ': ' + nextKey.toUpperCase() + '     </a></li>');
 
-                $('#notification-dropdown').append(newNotification);
+                $('#notification-dropdown-1').append(newNotification);
+                $('#notification-dropdown-2').append(newNotification.clone());
             })
         })
         if (count === 0) {
@@ -199,7 +202,7 @@ $(document).ready(function () {
             $('#notification-badge').attr('class', 'badge new red');
         }
 
-        $('#notification-badge').text(count);
+        $('.notification-badge').text(count);
     });
 
     $(document).on('click', '.delete-notification', function () {
