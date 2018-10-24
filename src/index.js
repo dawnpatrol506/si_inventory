@@ -31,7 +31,7 @@ $(document).ready(function () {
             user = '';
 
 
-            $('#sign-in-button').on('click ', (e) => {
+            $('#sign-in-button').on('click tap', (e) => {
                 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
                     .then(() => {
                         const provider = new firebase.auth.GoogleAuthProvider();
@@ -46,7 +46,7 @@ $(document).ready(function () {
                             if (err) throw err;
                         })
                     });
-                $('#sign-in-button').off('click ');
+                $('#sign-in-button').off('click tap');
             });
         }
     });
@@ -58,7 +58,7 @@ $(document).ready(function () {
         helper.countActiveParts(snap, color);
     })
 
-    $('#add-sbmt').on('click ', function (e) {
+    $('#add-sbmt').on('click tap', function (e) {
         e.preventDefault();
         const barcode = $('#add-barcode').val();
         add.addInventory(barcode, user);
@@ -66,7 +66,7 @@ $(document).ready(function () {
         $('#add-barcode').focus();
     })
 
-    $('#ship-sbmt').on('click ', function (e) {
+    $('#ship-sbmt').on('click tap', function (e) {
         e.preventDefault();
         if ($('#ship-tracking').val() === '') {
             $('#ship-tracking').focus();
@@ -80,7 +80,7 @@ $(document).ready(function () {
         }
     })
 
-    $(document).on('click ', '#check-sbmt', function (e) {
+    $(document).on('click tap', '#check-sbmt', function (e) {
         e.preventDefault();
         if (!helper.verifyBarcode($('#check-barcode').val())) {
             $('#check-barcode').val('');
@@ -108,7 +108,7 @@ $(document).ready(function () {
         $('#check-barcode').focus();
     })
 
-    $(document).on('click ', '#submit-new-count', function (e) {
+    $(document).on('click tap', '#submit-new-count', function (e) {
         e.preventDefault();
 
         let existingItemsArray = [];
@@ -136,7 +136,7 @@ $(document).ready(function () {
         })
     })
 
-    $(document).on('click touchstart', '.table-row', function () {
+    $(document).on('click', '.table-row', function () {
         $('#existing-items-array').empty();
 
         if ($(this).hasClass('showing-buttons') || $(this).hasClass('buttons-removed')) {
@@ -170,14 +170,14 @@ $(document).ready(function () {
         }
     })
 
-    $(document).on('click ', '.td-closer', function () {
+    $(document).on('click tap', '.td-closer', function () {
         $('.tooltipped').tooltip('destroy');
         $('.temp-td').remove();
         $('.showing-buttons').addClass('buttons-removed');
         $('.showing-buttons').removeClass('showing-buttons');
     });
 
-    $(document).on('click ', '.review-btn', function () {
+    $(document).on('click tap', '.review-btn', function () {
         let id = $('.showing-buttons').children().eq(1).attr('id');
         let color = $('#color-selector').val();
         firebaseFunctions.firebase.ref('part_lookup/' + id).once('value', snap => {
@@ -208,14 +208,14 @@ $(document).ready(function () {
         $('.notification-badge').text(count);
     });
 
-    $(document).on('click ', '.delete-notification', function () {
+    $(document).on('click tap', '.delete-notification', function () {
         console.log($(this).text());
         let splitArray = $(this).text().split(':');
         console.log(splitArray);
         firebaseFunctions.firebase.ref('review_requests/' + splitArray[0].trim() + '/' + splitArray[1].trim().toLowerCase()).remove()
     })
 
-    $(document).on('click ', '#log-out', () => {
+    $(document).on('click tap', '#log-out', () => {
         firebase.auth().signOut().then(() => console.log(`Signed out: ${user}`), (err) => { if (err) console.log(err); });
     })
 
