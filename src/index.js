@@ -20,12 +20,14 @@ $(document).ready(function () {
             $('#sign-in').attr('style', 'display:none');
             $('#nav-area').attr('style', '');
             $('#main-container').attr('style', '');
+            $('#side-nav').attr('style', '');
             user = userAuth.displayName;
         }
         else {
             $('#sign-in').attr('style', '');
             $('#nav-area').attr('style', 'display:none');
             $('#main-container').attr('style', 'display:none');
+            $('#side-nav').attr('style', 'display:none');
             user = '';
 
 
@@ -38,6 +40,7 @@ $(document).ready(function () {
                             $('#sign-in').attr('style', 'display:none');
                             $('#nav-area').attr('style', '');
                             $('#main-container').attr('style', '');
+                            $('#side-nav').attr('style', 'display:none');
                             user = (result.user.displayName);
                         }).catch(err => {
                             if (err) throw err;
