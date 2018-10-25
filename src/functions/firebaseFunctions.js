@@ -41,19 +41,30 @@ const firebaseFunctions = {
         })
     },
 
-    populateTable: function () {
-        firebase.ref('/part_lookup').once('value', snap => {
+    populateTable: function (color) {
+        $('.table-row').remove();
+        let colorKeyArray = [];
 
-            snap = snap.val();
-            $.each(snap, (key, value) => {
-                let newTableRow = $('<tr class="table-row"><td>' + value + '</td><td id="' + key + '">0</td></tr>');
-                $('#table').append(newTableRow);
+        firebase.ref('/color_lookup').once('value', colorSnap => {
+            colorSnap = colorSnap.val();
+            $.each(colorSnap, (colorKey, colorValue) => {
+                if (colorValue.split(', ').indexOf(color.toUpperCase()) !== -1) {
+                    colorKeyArray.push(colorKey);
+                }
             })
+            firebase.ref('/part_lookup').once('value', partSnap => {
+                partSnap = partSnap.val();
+                $.each(partSnap, (partKey, partValue) => {
+                    if (colorKeyArray.indexOf(partKey) !== -1) {
+                        let newTableRow = $('<tr class="table-row"><td>' + partValue + '</td><td id="' + partKey + '">0</td></tr>');
+                        $('#table').append(newTableRow);
+                    }
+                })
 
-            firebase.ref('/inventory').once('value', snap => {
-                helper.countActiveParts(snap.val(), 'black');
+                firebase.ref('/inventory').once('value', snap => {
+                    helper.countActiveParts(snap.val(), color);
+                })
             })
-
         })
     },
 
@@ -142,8 +153,8 @@ const firebaseFunctions = {
                         thisWeekCount += Object.keys(value).length;
                     })
                 }
-                else{
-                    $.each(snap[date.week()], (key, value) =>{
+                else {
+                    $.each(snap[date.week()], (key, value) => {
                         thisWeekCount += Object.keys(value).length;
                     })
                 }
@@ -156,8 +167,8 @@ const firebaseFunctions = {
                         lastWeekCount += Object.keys(value).length;
                     })
                 }
-                else{
-                    $.each(snap[date.week() - 1], (key, value) =>{
+                else {
+                    $.each(snap[date.week() - 1], (key, value) => {
                         lastWeekCount += Object.keys(value).length;
                     })
                 }

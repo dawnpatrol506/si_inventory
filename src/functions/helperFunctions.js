@@ -13,6 +13,9 @@ const helper = {
         else if (id === 'aj' || id === 'ak') {
             return references.ws[colorCode];
         }
+        else if (id === 'bp' || id === 'bq'){
+            return 'BLACK TEXTURE';
+        }
         else {
             return references.colors[colorCode];
         }

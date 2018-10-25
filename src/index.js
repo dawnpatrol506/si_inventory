@@ -128,12 +128,14 @@ $(document).ready(function () {
 
     $('select').on('change', (e) => {
         $('#existing-items-array').empty();
+        const color = $('#color-selector').val();
+        firebaseFunctions.populateTable(color);
 
-        firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
-            let color = $('#color-selector').val();
-            snap = snap.val();
-            helper.countActiveParts(snap, color);
-        })
+        // firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
+        //     let color = $('#color-selector').val();
+        //     snap = snap.val();
+        //     helper.countActiveParts(snap, color);
+        // })
     })
 
     $(document).on('click', '.table-row', function () {
@@ -219,5 +221,5 @@ $(document).ready(function () {
         firebase.auth().signOut().then(() => console.log(`Signed out: ${user}`), (err) => { if (err) console.log(err); });
     })
 
-    firebaseFunctions.populateTable();
+    firebaseFunctions.populateTable('BLACK');
 })
