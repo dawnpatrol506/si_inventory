@@ -1,11 +1,11 @@
 const references = require('./referenceValues');
 
 const helper = {
-    parseId: function(barcode){
+    parseId: function (barcode) {
         return barcode.substring(0, 2);
     },
 
-    parseColor: function(id, barcode) {
+    parseColor: function (id, barcode) {
         let colorCode = references.alpha.indexOf(barcode.substring(2, 3));
         if (id === 'bi') {
             return references.drpa[colorCode];
@@ -13,7 +13,7 @@ const helper = {
         else if (id === 'aj' || id === 'ak') {
             return references.ws[colorCode];
         }
-        else if (id === 'bp' || id === 'bq'){
+        else if (id === 'bp' || id === 'bq') {
             return 'BLACK TEXTURE';
         }
         else {
@@ -21,7 +21,7 @@ const helper = {
         }
     },
 
-    parseDateCreated: function(barcode) {
+    parseDateCreated: function (barcode) {
         let day = references.alpha.indexOf(barcode.substring(3, 4));
         let month = references.alpha.indexOf(barcode.substring(4, 5));
         let year = references.alpha.indexOf(barcode.substring(5, 6));
@@ -30,34 +30,52 @@ const helper = {
         return month + '/' + day + '/20' + year + ' ' + hour + ':00';
     },
 
-    verifyBarcode: function(barcode){
-        if(barcode.trim().length !== 18)
+    verifyBarcode: function (barcode) {
+        if (barcode.trim().length !== 18)
             return false;
-        if(!isNaN(barcode.substring(0,1)))
+        if (!isNaN(barcode.substring(0, 1)))
             return false;
 
         return true;
     },
 
-    verifyTracking: function(trackingNumber){
+    verifyTracking: function (trackingNumber) {
         let bool = true;
-        if(trackingNumber.trim().length < 12)
+        if (trackingNumber.trim().length < 12)
             return false;
-        for(let i = 0; i < trackingNumber.length; i++){
-            if(isNaN(trackingNumber.charAt(i)))
+        for (let i = 0; i < trackingNumber.length; i++) {
+            if (isNaN(trackingNumber.charAt(i)))
                 bool = false;
         }
         return bool;
     },
 
-    countActiveParts: function(snap, color) {
-        if(color === null)
+    countActiveParts: function (snap, color) {
+        if (color === null)
             return;
 
         $.each(snap, (key, value) => {
             let count = 0;
             $.each(value, (key, value) => {
-                if (key.toUpperCase() === color.toString().toUpperCase()) {
+                if (color.toString().toUpperCase() === 'BLACK' && key.toUpperCase() === 'DRIVER') {
+                    let count = 0;
+                    $.each(value, (key, value) => {
+                        if (value.status.toUpperCase() === 'ACTIVE') {
+                            count++;
+                        }
+                    })
+                    $('#bi-d').text(count);
+                }
+                else if (color.toString().toUpperCase() === 'BLACK' && key.toUpperCase() === 'PASSENGER') {
+                    let count = 0;
+                    $.each(value, (key, value) => {
+                        if (value.status.toUpperCase() === 'ACTIVE') {
+                            count++;
+                        }
+                    })
+                    $('#bi-p').text(count);
+                }
+                else if (key.toUpperCase() === color.toString().toUpperCase()) {
                     $.each(value, (key, value) => {
                         if (value.status.toUpperCase() === 'ACTIVE') {
                             count++;
@@ -65,7 +83,6 @@ const helper = {
                     })
                 }
             })
-
             $('#' + key).text(count);
         })
     }

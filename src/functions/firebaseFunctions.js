@@ -55,9 +55,17 @@ const firebaseFunctions = {
             firebase.ref('/part_lookup').once('value', partSnap => {
                 partSnap = partSnap.val();
                 $.each(partSnap, (partKey, partValue) => {
+
                     if (colorKeyArray.indexOf(partKey) !== -1) {
-                        let newTableRow = $('<tr class="table-row"><td>' + partValue + '</td><td id="' + partKey + '">0</td></tr>');
-                        $('#table').append(newTableRow);
+                        if (partKey == 'bi') {
+                            let driver = $('<tr class="table-row"><td>4D 800/900 DOOR - DRIVER</td><td id="bi-d">0</td></tr>');
+                            let pass = $('<tr class="table-row"><td>4D 800/900 DOOR - PASSENGER</td><td id="bi-p">0</td></tr>');
+                            $('#table').append(driver, pass);
+                        }
+                        else {
+                            let newTableRow = $('<tr class="table-row"><td>' + partValue + '</td><td id="' + partKey + '">0</td></tr>');
+                            $('#table').append(newTableRow);
+                        }
                     }
                 })
 

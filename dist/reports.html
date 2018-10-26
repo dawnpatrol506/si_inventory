@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./reports.css?v=9">
+    <title>Charts</title>
+</head>
+
+<body>
+    <nav id='nav-area' class="black">
+        <div class="nav-wrapper">
+            <a href="#" data-target="side-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <a href="#" class="brand-logo hide-on-med-and-down">Data Visualization</a>
+            <a href="#" class="brand-logo hide-on-large-only">Charts</a>
+            <ul class="right hide-on-med-and-down">
+                    <li><a href="./index.html" class="waves-effect waves-light modal-trigger">Return to Inventory</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <ul id='side-nav' class="sidenav">
+            <li><a href="./index.html" class="waves-effect waves-light modal-trigger">Return to Inventory</a></li>
+    </ul>
+
+
+    <div id="main-container" class="container">
+        <div class="row">
+            <canvas id="main-chart"></canvas>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
+    <script src="./reports.js"></script>
+</body>
+
+
+</html>
