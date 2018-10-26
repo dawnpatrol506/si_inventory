@@ -2,7 +2,7 @@ $(document).ready(function () {
     $('.modal').modal();
     $('select').formSelect();
     $('.dropdown-trigger').dropdown({ constrainWidth: false });
-    $('.sidenav').sidenav({preventScrolling: false});
+    $('.sidenav').sidenav({ preventScrolling: false });
 
 
 
@@ -12,8 +12,11 @@ $(document).ready(function () {
     const helper = require('./functions/helperFunctions');
     const firebase = require('firebase/app');
     require('firebase/auth');
+    require('firebase/functions');
+    const functions = firebase.functions();
     let user;
 
+    var normalizeDB = functions.httpsCallable('normalizeDB');
 
     firebase.auth().onAuthStateChanged(userAuth => {
         if (userAuth) {
@@ -22,6 +25,7 @@ $(document).ready(function () {
             $('#main-container').attr('style', '');
             $('#side-nav').attr('style', '');
             user = userAuth.displayName;
+            firebaseFunctions.populateTable('BLACK');
         }
         else {
             $('#sign-in').attr('style', '');
@@ -42,6 +46,7 @@ $(document).ready(function () {
                             $('#main-container').attr('style', '');
                             $('#side-nav').attr('style', 'display:none');
                             user = (result.user.displayName);
+                            firebaseFunctions.populateTable('BLACK');
                         }).catch(err => {
                             if (err) throw err;
                         })
@@ -130,12 +135,6 @@ $(document).ready(function () {
         $('#existing-items-array').empty();
         const color = $('#color-selector').val();
         firebaseFunctions.populateTable(color);
-
-        // firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
-        //     let color = $('#color-selector').val();
-        //     snap = snap.val();
-        //     helper.countActiveParts(snap, color);
-        // })
     })
 
     $(document).on('click', '.table-row', function () {
@@ -211,15 +210,14 @@ $(document).ready(function () {
     });
 
     $(document).on('click tap', '.delete-notification', function () {
-        console.log($(this).text());
         let splitArray = $(this).text().split(':');
-        console.log(splitArray);
         firebaseFunctions.firebase.ref('review_requests/' + splitArray[0].trim() + '/' + splitArray[1].trim().toLowerCase()).remove()
     })
 
     $(document).on('click tap', '#log-out', () => {
-        firebase.auth().signOut().then(() => console.log(`Signed out: ${user}`), (err) => { if (err) console.log(err); });
+        firebase.auth().signOut().then(() => {
+            console.log(`Signed out: ${user}`);
+            normalizeDB()
+        }, (err) => { if (err) console.log(err); });
     })
-
-    firebaseFunctions.populateTable('BLACK');
 })

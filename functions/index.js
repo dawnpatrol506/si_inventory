@@ -1,6 +1,11 @@
-const functions = 
+const functions = require('firebase-functions');
 
-function normalizeDB() {
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+const db = admin.database();
+
+exports.normalizeDB = functions.https.onCall(() =>{
     db.ref('inventory/').once('value', snap => {
         for (part in snap.val()) {
             for (color in snap.val()[part]) {
@@ -28,4 +33,4 @@ function normalizeDB() {
             }
         }
     });
-}
+});
