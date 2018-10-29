@@ -10,7 +10,7 @@ const helper = {
         if (id === 'bi') {
             return references.drpa[colorCode];
         }
-        else if (id === 'aj' || id === 'ak') {
+        else if (id === 'aj' || id === 'ak' || id === 'br') {
             return references.ws[colorCode];
         }
         else if (id === 'bp' || id === 'bq') {
