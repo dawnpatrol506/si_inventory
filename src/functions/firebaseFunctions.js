@@ -138,7 +138,7 @@ const firebaseFunctions = {
             let thisWeekCount = 0;
             let lastWeekCount = 0;
 
-            if (snap === null) {
+            if (snap === null || snap === undefined || snap[date.week()] === undefined || snap[date.week()] === null) {
                 const data = {
                     yesterdayCount,
                     thisWeekCount,
@@ -147,12 +147,12 @@ const firebaseFunctions = {
                 callback(data);
                 return;
             }
-
-            if (snap[date.week()][date.day() - 1] !== null && snap[date.week()][date.day() - 1] !== undefined) {
-                if (typeof (snap[date.week()][date.day() - 1]) === 'object')
-                    yesterdayCount = Object.keys(snap[date.week()][date.day() - 1]).length;
+            
+            if (snap[date.week()][date.day()] !== null && snap[date.week()][date.day()] !== undefined) {
+                if (typeof (snap[date.week()][date.day()]) === 'object')
+                    yesterdayCount = Object.keys(snap[date.week()][date.day()]).length;
                 else
-                    console.log('YESTERDAY: ', typeof (snap[date.week()][date.day() - 1]));
+                    console.log('YESTERDAY: ', typeof (snap[date.week()][date.day()]));
             }
 
             if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
