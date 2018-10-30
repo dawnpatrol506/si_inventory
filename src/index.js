@@ -158,12 +158,12 @@ $(document).ready(function () {
 
 
             firebaseFunctions.getRecentSalesData($('.showing-buttons').children().eq(1).attr('id'), $('#color-selector').val().toUpperCase(), moment(), function (data) {
-                let thisWeek = $('<span class="sales-data red-text tooltipped" data-position="top" data-tooltip="yesterday">' + data.yesterdayCount + '</span>');
-                let lastWeek = $('<span class="sales-data blue-text">' + data.thisWeekCount + '</span>');
-                let thisMonth = $('<span class="sales-data green-text">' + data.lastWeekCount + '</span>');
+                let today = $('<span class="sales-data red-text tooltipped" data-position="top" data-tooltip="yesterday">' + data.todayCount + '</span>');
+                let thisWeek = $('<span class="sales-data blue-text">' + data.thisWeekCount + '</span>');
+                let lastWeek = $('<span class="sales-data green-text">' + data.lastWeekCount + '</span>');
                 let weeklyAvg = $('<span class="sales-data orange-text">?</span>');
 
-                let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(thisWeek, lastWeek, thisMonth, weeklyAvg));
+                let row = $('<tr class="temp-td">').append(td, $('<td class="bold">').append(today, thisWeek, lastWeek, weeklyAvg));
                 $('.showing-buttons').after(row);
                 $('.tooltipped').tooltip();
 

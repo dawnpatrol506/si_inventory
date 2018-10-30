@@ -134,25 +134,30 @@ const firebaseFunctions = {
         ref.once('value', snap => {
             snap = snap.val();
 
-            let yesterdayCount = 0;
+            let todayCount = 0;
             let thisWeekCount = 0;
             let lastWeekCount = 0;
 
-            if (snap === null || snap === undefined || snap[date.week()] === undefined || snap[date.week()] === null) {
+            if (snap === null || snap === undefined) {
                 const data = {
-                    yesterdayCount,
+                    todayCount,
                     thisWeekCount,
                     lastWeekCount,
                 }
                 callback(data);
                 return;
             }
-            
-            if (snap[date.week()][date.day()] !== null && snap[date.week()][date.day()] !== undefined) {
-                if (typeof (snap[date.week()][date.day()]) === 'object')
-                    yesterdayCount = Object.keys(snap[date.week()][date.day()]).length;
-                else
-                    console.log('YESTERDAY: ', typeof (snap[date.week()][date.day()]));
+
+            if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
+                if (snap[date.week()][date.day()] === null || snap[date.week()][date.day()] === undefined) {
+                    todayCount = 0;
+                }
+                else {
+                    if (typeof (snap[date.week()][date.day()]) === 'object')
+                        todayCount = Object.keys(snap[date.week()][date.day()]).length;
+                    else
+                        console.log('YESTERDAY: ', typeof (snap[date.week()][date.day()]));
+                }
             }
 
             if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
@@ -171,7 +176,7 @@ const firebaseFunctions = {
 
             if (snap[date.week() - 1] !== undefined && snap[date.week() - 1] !== null) {
                 if (Array.isArray(snap[date.week() - 1])) {
-                    snap[date.week()].forEach(value => {
+                    snap[date.week() - 1].forEach(value => {
                         lastWeekCount += Object.keys(value).length;
                     })
                 }
@@ -184,11 +189,10 @@ const firebaseFunctions = {
             }
 
             const data = {
-                yesterdayCount,
+                todayCount,
                 thisWeekCount,
                 lastWeekCount
             };
-
             callback(data);
         });
     },
