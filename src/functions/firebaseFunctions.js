@@ -80,35 +80,43 @@ const firebaseFunctions = {
         const id = helper.parseId(existingItemsArray[0]);
         const color = helper.parseColor(id, existingItemsArray[0]);
 
-        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) => {
-            let dbBarcodes = [];
-            $.each(snap.val(), (key, value) => dbBarcodes.push(key));
+        if (existingItemsArray.length === 0) {
+            console.log('empty');
+        }
+        else {
+            firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/').once('value', (snap) => {
+                let dbBarcodes = [];
+                $.each(snap.val(), (key, value) => dbBarcodes.push(key));
 
-            dbBarcodes.forEach(code => {
-                let index = existingItemsArray.indexOf(code);
-                if (index < 0) {
-                    firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Inactive', lastUpdatedBy: user, dateShipped: 'unknown' });
-                }
-                else {
-                    existingItemsArray.splice(index, 1);
-                    if (snap.val()[code].status !== 'active') {
-                        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Active', lastUpdatedBy: user, dateShipped: '' });
+                dbBarcodes.forEach(code => {
+                    let index = existingItemsArray.indexOf(code);
+                    if (index < 0) {
+                        firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Inactive', lastUpdatedBy: user, dateShipped: 'unknown' });
                     }
-                }
+                    else {
+                        existingItemsArray.splice(index, 1);
+                        if (snap.val()[code].status !== 'active') {
+                            firebase.ref('/inventory/' + id + '/' + color.toUpperCase() + '/' + code + '/').update({ status: 'Active', lastUpdatedBy: user, dateShipped: '' });
+                        }
+                    }
+                })
             })
-        })
 
-        if (existingItemsArray.length > 0) {
-            existingItemsArray.forEach(barcode => {
-                const obj = {
-                    id: id,
-                    color: color,
-                    barcode: barcode,
-                    dateCreated: helper.parseDateCreated(barcode),
-                    user: user
-                }
+            if (existingItemsArray.length > 0) {
+                existingItemsArray.forEach(barcode => {
+                    const obj = {
+                        id: id,
+                        color: color,
+                        barcode: barcode,
+                        dateCreated: helper.parseDateCreated(barcode),
+                        user: user
+                    }
 
-                this.add(obj);
+                    this.add(obj);
+                })
+            }
+            firebase.ref('/inventory').once('value', snap => {
+                helper.countActiveParts(snap.val(), color);
             })
         }
     },
@@ -121,6 +129,9 @@ const firebaseFunctions = {
                     firebase.ref(ref).update({ status: 'Inactive', lastUpdatedBy: user, dateShipped: 'Unknown' });
                 }
             })
+            firebase.ref('/inventory').once('value', snap => {
+                helper.countActiveParts(snap.val(), color);
+            })
         })
     },
 
@@ -130,7 +141,7 @@ const firebaseFunctions = {
     },
 
     getRecentSalesData: function (id, color, date, callback) {
-        const ref = firebase.ref(`sales/${id}/${color}/${date.year()}/${date.month() + 1}`);
+        const ref = firebase.ref(`sales/${id}/${color}/${date.year()}`);
         ref.once('value', snap => {
             snap = snap.val();
 
@@ -148,44 +159,51 @@ const firebaseFunctions = {
                 return;
             }
 
-            if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
-                if (snap[date.week()][date.day()] === null || snap[date.week()][date.day()] === undefined) {
-                    todayCount = 0;
-                }
-                else {
-                    if (typeof (snap[date.week()][date.day()]) === 'object')
-                        todayCount = Object.keys(snap[date.week()][date.day()]).length;
-                    else
-                        console.log('YESTERDAY: ', typeof (snap[date.week()][date.day()]));
-                }
-            }
-
-            if (snap[date.week()] !== undefined && snap[date.week()] !== null) {
-                if (Array.isArray(snap[date.week()])) {
-                    snap[date.week()].forEach(value => {
-                        thisWeekCount += Object.keys(value).length;
-                    })
-                }
-                else {
-                    $.each(snap[date.week()], (key, value) => {
-                        thisWeekCount += Object.keys(value).length;
-                    })
+            for (let i = 0; i < 2; i++) {
+                let data = snap[date.month() + i];
+                if(data === undefined || data === null){
+                    continue;
                 }
 
-            }
-
-            if (snap[date.week() - 1] !== undefined && snap[date.week() - 1] !== null) {
-                if (Array.isArray(snap[date.week() - 1])) {
-                    snap[date.week() - 1].forEach(value => {
-                        lastWeekCount += Object.keys(value).length;
-                    })
-                }
-                else {
-                    $.each(snap[date.week() - 1], (key, value) => {
-                        lastWeekCount += Object.keys(value).length;
-                    })
+                if (data[date.week()] !== undefined && data[date.week()] !== null) {
+                    if (data[date.week()][date.day()] === null || data[date.week()][date.day()] === undefined) {
+                        todayCount = 0;
+                    }
+                    else {
+                        if (typeof (data[date.week()][date.day()]) === 'object')
+                            todayCount = Object.keys(data[date.week()][date.day()]).length;
+                        else
+                            console.log('YESTERDAY: ', typeof (data[date.week()][date.day()]));
+                    }
                 }
 
+                if (data[date.week()] !== undefined && data[date.week()] !== null) {
+                    if (Array.isArray(data[date.week()])) {
+                        data[date.week()].forEach(value => {
+                            thisWeekCount += Object.keys(value).length;
+                        })
+                    }
+                    else {
+                        $.each(data[date.week()], (key, value) => {
+                            thisWeekCount += Object.keys(value).length;
+                        })
+                    }
+
+                }
+
+                if (data[date.week() - 1] !== undefined && data[date.week() - 1] !== null) {
+                    if (Array.isArray(data[date.week() - 1])) {
+                        data[date.week() - 1].forEach(value => {
+                            lastWeekCount += Object.keys(value).length;
+                        })
+                    }
+                    else {
+                        $.each(data[date.week() - 1], (key, value) => {
+                            lastWeekCount += Object.keys(value).length;
+                        })
+                    }
+
+                }
             }
 
             const data = {

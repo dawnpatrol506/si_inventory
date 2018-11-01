@@ -59,8 +59,7 @@ $(document).ready(function () {
     //listeners
     firebaseFunctions.firebase.ref('/inventory').on('value', snap => {
         let color = $('#color-selector').val();
-        snap = snap.val();
-        helper.countActiveParts(snap, color);
+        helper.countActiveParts(snap.val(), color);
     })
 
     $('#add-sbmt').on('click tap', function (e) {
@@ -194,7 +193,7 @@ $(document).ready(function () {
             $.each(value, (nextKey, nextValue) => {
                 count++;
                 let newNotification = $('<li><a href="#" class="delete-notification">' + key.toUpperCase() + ': ' + nextKey.toUpperCase() + '     </a></li>');
-
+    
                 $('#notification-dropdown-1').append(newNotification);
                 $('#notification-dropdown-2').append(newNotification.clone());
             })
