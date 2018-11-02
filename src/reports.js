@@ -1,5 +1,6 @@
 $(document).ready(function () {
     $('.sidenav').sidenav({ preventScrolling: false });
+    $('select').formSelect();
 
     const Chart = require('chart.js');
     const firebase = require('firebase');
@@ -12,20 +13,92 @@ $(document).ready(function () {
         storageBucket: "strandindinventory.appspot.com",
         messagingSenderId: "854079353246"
     };
-    
-      firebase.initializeApp(config);
+
+    firebase.initializeApp(config);
 
     const db = firebase.database();
-    
-    function createLineChart(element, data){
-        const chart = new Chart(element, {
+
+    function createLineChart(element, data) {
+        console.log(element, data);
+        var chart = new Chart(element, {
             type: 'line',
             data: data,
         });
     };
 
+    db.ref('/part_lookup').once('value', snap => {
+        $.each(snap.val(), (key, value) => {
+            let newOption = $(`<option data-value="${key}">${value}</option>`)
+            $('#part-selector').append(newOption);
+        })
+        $('#part-selector').formSelect();
+    })
 
-    function getData(path, numberOfPoints, callback){
+    $(document).on('change', '#part-selector', function (e) {
+        let id = $('#part-selector > option:selected').attr('data-value');
+        db.ref(`/color_lookup/${id}/`).once('value', snap => {
+            let colors = snap.val().split(', ');
+            $('#color-selector').empty();
+
+            colors.forEach(color => {
+                let newOption = $(`<option data-value="${color}">${color}</option>`);
+                $('#color-selector').append(newOption);
+            })
+            $('#color-selector').formSelect();
+        })
+    })
+
+    $(document).on('click', '#generate-graph', function (e) {
+        let id = $('#part-selector > option:selected').attr('data-value');
+        let color = $('#color-selector > option:selected').attr('data-value').toUpperCase();
+        getIndividualPartData(id, color, (data) => {
+            createLineChart($('#main-chart'), data);
+        })
+    })
+
+    function getIndividualPartData(id, color, callback) {
+        let data = {
+            labels: [],
+            xAxisID: 'Time in Weeks',
+            yAxisID: 'Number of Packages Shipped',
+            datasets: []
+        }
+        let date = moment();
+
+        db.ref(`/sales/${id}/${color}/${date.year()}/`).once('value', snap => {
+            let arr = [];
+            for (let i = 1; i < 52; i++) {
+                let count = 0;
+                $.each(snap.val(), (monthKey, monthValue) => {
+                    $.each(monthValue, (weekKey, weekValue) => {
+                        //console.log('week', weekKey, ' i', i);
+                        if (parseInt(weekKey) === i) {
+                            $.each(weekValue, (dayKey, dayValue) => {
+                                if (dayValue !== undefined && dayValue !== null)
+                                    count += Object.keys(dayValue).length;
+                            })
+                        }
+                    })
+                })
+                if (count > 0) {
+                    data.labels.push(i);
+                    arr.push(count);
+                }
+            }
+            data.datasets.push({
+                label: 'Weekly Sales',
+                fill: false,
+                data: arr,
+                borderColor: 'rgba(63, 81, 181, 1)',
+                borderWidth: 3,
+                pointBackgroundColor: 'rgba(63, 81, 181, 1)'
+            });
+            callback(data);
+        })
+
+    }
+
+    function getYearData(path, numberOfPoints, callback) {
         let data = {
             labels: [],
             xAxisID: 'Time in Weeks',
@@ -33,12 +106,12 @@ $(document).ready(function () {
             datasets: []
         }
 
-        for(let i = 1; i <= numberOfPoints; i++){data.labels.push(i)};
+        for (let i = 1; i <= numberOfPoints; i++) { data.labels.push(i) };
 
-        db.ref(path).once('value', snap =>{
-            $.each(snap.val(), (yearKey, valueKey) =>{
+        db.ref(path).once('value', snap => {
+            $.each(snap.val(), (yearKey, valueKey) => {
                 let arr = [];
-                for(let i = 1; i <= numberOfPoints; i++){
+                for (let i = 1; i <= numberOfPoints; i++) {
                     arr.push(snap.val()[yearKey][i]);
                 }
                 let lineData = {
@@ -55,8 +128,9 @@ $(document).ready(function () {
         })
     }
 
-    getData('/report_data', 52, data => {
+    getYearData('/report_data', 52, data => {
         createLineChart($('#main-chart'), data);
+        // console.log(data);
     })
 
 
