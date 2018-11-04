@@ -19,7 +19,7 @@ $(document).ready(function () {
     const db = firebase.database();
 
     function createLineChart(element, data) {
-        console.log(element, data);
+        // console.log(element, data);
         var chart = new Chart(element, {
             type: 'line',
             data: data,
@@ -65,37 +65,50 @@ $(document).ready(function () {
         }
         let date = moment();
 
-        db.ref(`/sales/${id}/${color}/${date.year()}/`).once('value', snap => {
-            let arr = [];
-            for (let i = 1; i < 52; i++) {
-                let count = 0;
-                $.each(snap.val(), (monthKey, monthValue) => {
-                    $.each(monthValue, (weekKey, weekValue) => {
-                        //console.log('week', weekKey, ' i', i);
-                        if (parseInt(weekKey) === i) {
-                            $.each(weekValue, (dayKey, dayValue) => {
-                                if (dayValue !== undefined && dayValue !== null)
-                                    count += Object.keys(dayValue).length;
-                            })
-                        }
+        for(let i = 1; i < 53; i++){
+            data.labels.push(i);
+        }
+
+        db.ref(`/sales/${id}/${color}/`).once('value', snap => {
+            // console.log('SNAP: ', snap.val());
+            $.each(snap.val(), (yearKey, yearValue) => {
+                let arr = [];
+                for (let i = 1; i < 53; i++) {
+                    let count = 0;
+                    $.each(yearValue, (monthKey, monthValue) => {
+                        $.each(monthValue, (weekKey, weekValue) => {
+                            //console.log('week', weekKey, ' i', i);
+                            if (parseInt(weekKey) === i) {
+                                $.each(weekValue, (dayKey, dayValue) => {
+                                    // console.log(dayKey, ': ', dayValue);
+                                    if (dayValue !== undefined && dayValue !== null)
+                                        count += Object.keys(dayValue).length;
+                                        // console.log('COUNT: ', count);
+                                })
+                            }
+                        })
                     })
-                })
-                if (count > 0) {
-                    data.labels.push(i);
-                    arr.push(count);
+                    if (count > 0) {
+                        arr.push(count);
+                    }
                 }
-            }
-            data.datasets.push({
-                label: 'Weekly Sales',
-                fill: false,
-                data: arr,
-                borderColor: 'rgba(63, 81, 181, 1)',
-                borderWidth: 3,
-                pointBackgroundColor: 'rgba(63, 81, 181, 1)'
-            });
+                let rgba;
+                if(yearKey === '2017')
+                    rgba = 'rgba(63, 81, 181, 1)';
+                else
+                    rgba = 'rgba(0, 150, 136, 1)';
+
+                data.datasets.push({
+                    label: yearKey,
+                    fill: false,
+                    data: arr,
+                    borderColor: rgba,
+                    borderWidth: 3,
+                    pointBackgroundColor: rgba
+                });
+            })
             callback(data);
         })
-
     }
 
     function getYearData(path, numberOfPoints, callback) {
