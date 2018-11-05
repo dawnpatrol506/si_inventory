@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $('.sidenav').sidenav({ preventScrolling: false });
     $('select').formSelect();
+    $('.datepicker').datepicker();
 
     const Chart = require('chart.js');
     const firebase = require('firebase');
@@ -18,12 +19,17 @@ $(document).ready(function () {
 
     const db = firebase.database();
 
-    function createLineChart(element, data) {
-        // console.log(element, data);
-        var chart = new Chart(element, {
-            type: 'line',
+    function createChart(element, data, type, options) {
+        console.log('TYPE: ', type);
+        let canvas = $('<canvas>');
+        var chart = new Chart(canvas, {
+            type: type,
             data: data,
+            options: options
         });
+
+        element.empty();
+        element.append(canvas);
     };
 
     db.ref('/part_lookup').once('value', snap => {
@@ -50,9 +56,18 @@ $(document).ready(function () {
 
     $(document).on('click', '#generate-graph', function (e) {
         let id = $('#part-selector > option:selected').attr('data-value');
-        let color = $('#color-selector > option:selected').attr('data-value').toUpperCase();
+        let color = $('#color-selector > option:selected').attr('data-value') || 'BLACK';
+        let options = {
+            title: {
+                display: true,
+                position: 'top',
+                fontSize: '20',
+                text: `${$('#part-selector > option:selected').text()}: ${color} by Week`
+            }
+        }
+
         getIndividualPartData(id, color, (data) => {
-            createLineChart($('#main-chart'), data);
+            createChart($('#main-chart'), data, $('.graph-type:checked').val(), options);
         })
     })
 
@@ -65,7 +80,7 @@ $(document).ready(function () {
         }
         let date = moment();
 
-        for(let i = 1; i < 53; i++){
+        for (let i = 1; i < 53; i++) {
             data.labels.push(i);
         }
 
@@ -83,7 +98,7 @@ $(document).ready(function () {
                                     // console.log(dayKey, ': ', dayValue);
                                     if (dayValue !== undefined && dayValue !== null)
                                         count += Object.keys(dayValue).length;
-                                        // console.log('COUNT: ', count);
+                                    // console.log('COUNT: ', count);
                                 })
                             }
                         })
@@ -93,18 +108,19 @@ $(document).ready(function () {
                     }
                 }
                 let rgba;
-                if(yearKey === '2017')
+                if (yearKey === '2017')
                     rgba = 'rgba(63, 81, 181, 1)';
                 else
                     rgba = 'rgba(0, 150, 136, 1)';
 
                 data.datasets.push({
                     label: yearKey,
-                    fill: false,
+                    fill: $('.graph-type:checked').val() === 'line' ? false : true,
                     data: arr,
                     borderColor: rgba,
                     borderWidth: 3,
-                    pointBackgroundColor: rgba
+                    pointBackgroundColor: rgba,
+                    backgroundColor: rgba
                 });
             })
             callback(data);
@@ -130,7 +146,7 @@ $(document).ready(function () {
                 let lineData = {
                     data: arr,
                     label: yearKey,
-                    fill: false,
+                    fill: $('.graph-type:checked').val() === 'line' ? false : true,
                     borderColor: snap.val()[yearKey].rgb,
                     borderWidth: 3,
                     pointBackgroundColor: snap.val()[yearKey].rgb
@@ -142,8 +158,15 @@ $(document).ready(function () {
     }
 
     getYearData('/report_data', 52, data => {
-        createLineChart($('#main-chart'), data);
-        // console.log(data);
+        let options = {
+            title: {
+                display: true,
+                position: 'top',
+                fontSize: '20',
+                text: 'Packages by Week'
+            }
+        }
+        createChart($('#main-chart'), data, $('.graph-type:checked').val(), options);
     })
 
 
