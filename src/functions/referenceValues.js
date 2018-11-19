@@ -1,6 +1,6 @@
 const references = {
     alpha: createAlpha(),
-    colors: ['BLACK', 'WHITE', 'BLUE', 'ORANGE', 'RED', 'LIME', 'GRAY', 'BLACK WRINKLE', 'BLACK TEXTURE'],
+    colors: ['BLACK', 'WHITE', 'BLUE', 'ORANGE', 'RED', 'LIME', 'GRAY', 'BLACK WRINKLE', 'BLACK TEXTURE', 'SKY BLUE', 'CRYSTAL GRAY'],
     drpa: ['DRIVER', 'PASSENGER'],
     ws: ['CLEAR', 'TINTED'],
 }

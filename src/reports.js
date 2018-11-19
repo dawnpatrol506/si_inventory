@@ -3,6 +3,25 @@ $(document).ready(function () {
     $('select').formSelect();
     $('.datepicker').datepicker();
 
+    const noUiSlider = require('nouislider');
+    
+    var slider = document.getElementById('range-slider');
+    noUiSlider.create(slider, {
+     start: [20, 80],
+     connect: true,
+     step: 1,
+     direction: 'rtl',
+     orientation: 'horizontal', // 'horizontal' or 'vertical'
+     range: {
+       'min': 0,
+       'max': 100
+     },
+     format: wNumb({
+       decimals: 0
+     })
+    });
+    
+
     const Chart = require('chart.js');
     const firebase = require('firebase');
 
@@ -20,7 +39,6 @@ $(document).ready(function () {
     const db = firebase.database();
 
     function createChart(element, data, type, options) {
-        console.log('TYPE: ', type);
         let canvas = $('<canvas>');
         var chart = new Chart(canvas, {
             type: type,

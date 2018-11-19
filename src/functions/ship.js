@@ -17,7 +17,6 @@ const ship = {
             return;
         }
         let date = moment();
-        console.log(date);
 
         let shipObject = {
             id: helper.parseId(barcode),
@@ -26,7 +25,7 @@ const ship = {
             dateShipped: date.format('MMM DD, YYYY'),
             tracking: tracking.substring(tracking.length - 12, tracking.length),
             user: user,
-            barcode: barcode
+            barcode: barcode.trim()
         }
 
         let dateObject = {

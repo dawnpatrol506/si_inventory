@@ -24,11 +24,17 @@ const firebaseFunctions = {
     },
 
     add: function (obj) {
-        firebase.ref('inventory/' + obj.id + '/' + obj.color + '/' + obj.barcode + '/').set({ dateCreated: obj.dateCreated, status: 'active', lastUpdatedBy: obj.user });
+        firebase.ref('inventory/' + obj.id + '/' + obj.color + '/' + obj.barcode.trim() + '/').set({ dateCreated: obj.dateCreated, status: 'active', lastUpdatedBy: obj.user });
     },
 
     ship: function (shipObject) {
-        firebase.ref('inventory/' + shipObject.id + '/' + shipObject.color + '/' + shipObject.barcode + '/').update({ dateShipped: shipObject.dateShipped, tracking: shipObject.tracking, status: 'INACTIVE', lastUpdatedBy: shipObject.user, dateCreated: shipObject.dateCreated });
+        firebase.ref('inventory/' + shipObject.id + '/' + shipObject.color + '/' + shipObject.barcode.trim() + '/').update({ dateShipped: shipObject.dateShipped, tracking: shipObject.tracking, status: 'INACTIVE', lastUpdatedBy: shipObject.user, dateCreated: shipObject.dateCreated },
+            function (error) {
+                if (error) {
+                    $('#ship-name').text('Changes Not saved in Database');
+                    $('#last-shipped').attr('class', 'red accent-3');
+                }
+            });
     },
 
     lastChanged: function (obj, elementPrefix) {
@@ -161,7 +167,7 @@ const firebaseFunctions = {
 
             for (let i = 0; i < 2; i++) {
                 let data = snap[date.month() + i];
-                if(data === undefined || data === null){
+                if (data === undefined || data === null) {
                     continue;
                 }
 
